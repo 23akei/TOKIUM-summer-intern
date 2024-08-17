@@ -1,24 +1,19 @@
-# README
+## 環境構築
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### クローン
+```bash
+cd 作業ディレクトリ
+git clone git@github.com:TOKIUM/summer-intern.git
+cd summer-intern
+```
 
-Things you may want to cover:
+### 各種セットアップ
+```bash
+docker-compose up --build
+docker-compose run web rails db:setup
+docker-compose run web rails db:migrate
+docker-compose run web bundle exec rails webpacker:compile
+```
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+### ローカルサーバーへのアクセス
+すべてが正常に動作している場合、ブラウザで http://localhost:3000 にアクセスして、アプリケーションが期待通りに動作しているか確認
