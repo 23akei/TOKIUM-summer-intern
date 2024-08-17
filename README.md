@@ -9,10 +9,15 @@ cd summer-intern
 
 ### 各種セットアップ
 ```bash
-docker-compose up --build
+docker-compose build --no-cache
 docker-compose run web rails db:setup
 docker-compose run web rails db:migrate
 docker-compose run web bundle exec rails webpacker:compile
+```
+
+### サーバー起動
+```bash
+docker-compose run web up -d
 ```
 
 ### ローカルサーバーへのアクセス
