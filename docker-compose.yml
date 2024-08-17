@@ -20,4 +20,13 @@ services:
       DATABASE_USER: postgres
       DATABASE_PASSWORD: password
       NODE_OPTIONS: --openssl-legacy-provider
+  webpacker:
+    build: .
+    command: ./bin/webpack-dev-server
+    volumes:
+      - .:/app
+    ports:
+      - "3035:3035"
+    depends_on:
+      - web
 
