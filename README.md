@@ -18,7 +18,7 @@ docker-compose run web bundle exec rails webpacker:compile
 
 ### サーバー起動
 ```bash
-docker-compose run web up -d
+docker-compose up -d
 ```
 
 ### ローカルサーバーへのアクセス
