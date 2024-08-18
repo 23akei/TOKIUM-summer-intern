@@ -5,6 +5,9 @@ ruby "3.3.4"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 7.0.0'
 
+# rakeが認識されないので追加
+gem 'rake', '~> 13.0'
+
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
 
@@ -12,7 +15,7 @@ gem "pg", "~> 1.1"
 gem "puma", "~> 5.0"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
-gem "jbuilder"
+# gem "jbuilder"
 
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
@@ -33,13 +36,21 @@ gem "bootsnap", require: false
 # gem "image_processing", "~> 1.2"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
-# gem "rack-cors"
+gem "rack-cors"
 
 gem 'sass-rails', '>= 6'
-gem 'webpacker', '~> 5.0'
+# gem 'webpacker', '~> 5.0'
 gem 'turbolinks', '~> 5'
 gem 'uglifier', '>= 1.3.0'
 gem 'execjs'
+gem 'base64'
+gem 'bigdecimal'
+gem 'mutex_m'
+
+# install ffi
+gem 'ffi'
+
+gem 'therubyracer', platforms: :ruby
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -50,4 +61,3 @@ group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
-
