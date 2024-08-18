@@ -6,6 +6,17 @@ services:
     environment:
       POSTGRES_PASSWORD: password
 
+  test_db:
+    image: postgres:latest
+    volumes:
+      - ./tmp/test_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    tmpfs:
+      - /tmp/lib/postgresql/data
+
   app:
     build:
       context: .
@@ -27,6 +38,24 @@ services:
       DATABASE_USER: postgres
       DATABASE_PASSWORD: password
       NODE_OPTIONS: --openssl-legacy-provider
+
+  rspec:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    environment:
+      RAILSENV: test
+      TEST_HOSTNAME: test_db
+    command: >
+      bash -c
+      "bundle exec rails db:create &&
+      bundle exec rails db:migrate &&
+      bundle exec spring server"
+    volumes:
+      - .:/app
+    depends_on:
+      - test_db
+
 
   # webpacker:
   #   build: .
