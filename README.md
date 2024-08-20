@@ -9,9 +9,9 @@ cd TOKIUM-summer-intern
 
 ### 各種セットアップ
 ```bash
-docker-compose run --rm web yarn install
-docker-compose run web rails db:setup
-docker-compose run web rails db:migrate
+docker compose run --rm front yarn install
+docker compose run app rails db:setup
+docker compose run app rails db:migrate
 ```
 
 ### サーバー起動
