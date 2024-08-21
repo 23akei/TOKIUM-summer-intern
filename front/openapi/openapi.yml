@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  title: Keihi Seisan API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local server
+
+paths:
+  /hello:
+    get:
+      summary: Get a hello message
+      tags:
+        - Hello
+      operationId: getHello
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /users:
+    get:
+      summary: Get all users
+      tags:
+        - Users
+      operationId: getUsers
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a new user
+      tags:
+        - Users
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
