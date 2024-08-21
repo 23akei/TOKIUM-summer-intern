@@ -7,37 +7,7 @@ servers:
     description: Local server
 
 paths:
-  /hello:
-    get:
-      summary: Get a hello message
-      tags:
-        - Hello
-      operationId: getHello
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
   /users:
-    get:
-      summary: Get all users
-      tags:
-        - Users
-      operationId: getUsers
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
     post:
       summary: Create a new user
       tags:
@@ -49,9 +19,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties:
-                name:
-                  type: string
+              $ref: '#/components/schemas/User'
       responses:
         '201':
           description: User created successfully
@@ -64,12 +32,470 @@ paths:
                     type: integer
                   name:
                     type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /users/{role}:
+    get:
+      summary: Get all users by role
+      tags:
+        - Users
+      operationId: getUsersByRole
+      parameters:
+        - name: role
+          in: path
+          required: true
+          description: Role of the users to get
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /users/{userId}:
+    get:
+      summary: Get a user by ID
+      tags:
+        - Users
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user to get
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /application:
+    post:
+      summary: Create a new application
+      tags:
+        - Applications
+      operationId: createApplication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/Application'
+      responses:
+        '201':
+          description: Application created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    get:
+      summary: Get all applications
+      tags:
+        - Applications
+      operationId: getApplications
+      responses:
+        '200':
+          description: Applications retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /application/{applicationId}:
+    get:
+      summary: Get an application by ID
+      tags:
+        - Applications
+      operationId: getApplicationById
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          description: ID of the application to get
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Application retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /application/{userId}:
+    get:
+      summary: Get all applications by user ID
+      tags:
+        - Applications
+      operationId: getApplicationsByUserId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user to get applications
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Applications retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /flows:
+    get:
+      summary: Get all flows
+      tags:
+        - Flows
+      operationId: getFlows
+      responses:
+        '200':
+          description: Flows retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Flow'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    post:
+      summary: Create a new flow
+      tags:
+        - Flows
+      operationId: createFlow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/Flow'
+      responses:
+        '201':
+          description: Flow created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /flows/{flowId}:
+    get:
+      summary: Get a flow by ID
+      tags:
+        - Flows
+      operationId: getFlowById
+      parameters:
+        - name: flowId
+          in: path
+          required: true
+          description: ID of the flow to get
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Flow retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flow'
+        '404':
+          description: Flow not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /approvals:
+    post:
+      summary: Create a new approval
+      tags:
+        - Approvals
+      operationId: createApproval
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/Approval'
+      responses:
+        '201':
+          description: Approval created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /approvals/{userId}:
+    get:
+      summary: 自身に承認の要求が来ている申請を取得
+      tags:
+        - Approvals
+      operationId: getApprovalsByUserId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user to get approvals
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Approvals retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Approval'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
 components:
   schemas:
     User:
+      description: ユーザー
       type: object
       properties:
-        id:
-          type: integer
         name:
+          type: string
+        role:
+          type: string
+    Application:
+      description: 経費申請
+      type: object
+      properties:
+        name:
+          type: string
+        date:
+          type: string
+        description:
+          type: string
+        user_id:
+          type: integer
+        kind:
+          type: string
+        shop:
+          type: string
+        amount:
+          type: integer
+        status:
+          type: string
+    Flow:
+      description: 承認フロー
+      type: object
+      properties:
+        flow:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Condition'
+              - $ref: '#/components/schemas/Approvers'
+    Condition:
+      description: 承認フローの条件
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+        Condition:
+          type: string
+    Approvers:
+      description: 承認フローごとの承認者のリスト
+      type: object
+      properties:
+        approvers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    Approval:
+      description: 申請状態
+      type: object
+      properties:
+        application_id:
+          description: 申請ID
+          type: integer
+        user_id:
+          description: 承認者のユーザーID
+          type: integer
+        status:
+          description: 承認状態（approved, rejected）
           type: string
