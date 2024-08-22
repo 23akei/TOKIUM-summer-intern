@@ -159,7 +159,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: '#/components/schemas/Application'
+              $ref: '#/components/schemas/CreateApplication'
       responses:
         '201':
           description: Application created successfully
@@ -251,7 +251,7 @@ paths:
                 properties:
                   message:
                     type: string
-  /application/{userId}:
+  /application/user/{userId}:
     get:
       summary: Get all applications by user ID
       tags:
@@ -480,7 +480,7 @@ components:
       description: 経費申請
       type: object
       properties:
-        name:
+        title:
           type: string
         date:
           type: string
@@ -494,8 +494,30 @@ components:
           type: string
         amount:
           type: integer
-        status:
+        approval_state:
           type: string
+        flow_id:
+          type: integer
+    CreateApplication:
+      description: 経費申請作成
+      type: object
+      properties:
+        title:
+          type: string
+        date:
+          type: string
+        description:
+          type: string
+        user_id:
+          type: integer
+        kind:
+          type: string
+        shop:
+          type: string
+        amount:
+          type: integer
+        flow_id:
+          type: integer
     Flow:
       description: 承認フロー
       type: object
