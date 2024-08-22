@@ -7,7 +7,8 @@
     "dev": "vite --host --port 8080",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "openapi": "swagger-typescript-api -p ./openapi/openapi.yml -o ./openapi -n api.ts"
   },
   "dependencies": {
     "axios": "^1.7.4",
@@ -28,6 +29,7 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "react-router": "^6.26.1",
+    "swagger-typescript-api": "^13.0.21",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
