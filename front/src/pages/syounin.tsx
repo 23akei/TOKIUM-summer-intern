@@ -24,6 +24,13 @@ export default function Syounin() {
     ])
   }
   
+  const approve = async () => {
+    // const res = await api.application.
+  }
+  const reject = () => {
+    
+  }
+  
   return (
     <>
       <p style={{display:"inline"}}>user id: </p>
@@ -36,7 +43,11 @@ export default function Syounin() {
           <div style={{display:"flex", border: "1px solid #000"}}>
           <p style={{padding: "0 100px"}}>user id:{appr.user_id}</p>
           <p style={{padding: "0 100px"}}>application id:{appr.application_id}</p>
-          <p>status:{appr.status}</p>
+          <p style={{width: "200px"}}>status:{appr.status}</p>
+          <div style={{display:"flex", alignItems: "center"}}>
+          <button onClick>承認</button>
+          <button onClick>却下</button>
+          </div>
         </div>)
         : <p>承認するものなし</p>}
     </>
