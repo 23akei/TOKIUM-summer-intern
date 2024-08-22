@@ -3,7 +3,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       # /users
       resources :users, only: [:create]
-      get 'users/role/:role', to: 'users#index'
+      get 'users', to: 'users#index'
+      get 'users/role/:role', to: 'users#get_by_role'
       get 'users/:id', to: 'users#show'
 
       # /application
