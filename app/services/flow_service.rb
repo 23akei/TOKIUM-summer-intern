@@ -26,6 +26,7 @@ class FlowService
             return nil, "User not found"
           rescue => e
             return nil, e.message
+          end
         end
       elsif flow_params["condition"]
         cond = flow_params["condition"]
