@@ -7,16 +7,12 @@ class FlowService
     end
 
     flow_contents = createflow_params[:flow]
-    print("Flow contents:", flow_contents, "\n")
 
     step = 1
     flow_contents.each do |flow_params|
-      print("Flow prams:", flow_params.class, "\n")
-      # check if the flow_params is hash or list
       if flow_params["approvers"]
         approvers = flow_params["approvers"]
         approvers.each do |approver_params|
-          print("Approver params:", approver_params)
           approver = Approver.new(
             flow_id: flow["id"].to_i,
             user_id: approver_params["id"].to_i,
