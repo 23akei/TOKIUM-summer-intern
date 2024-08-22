@@ -4,7 +4,6 @@ import Header from './components/header.tsx'
 import SinkiUserSakusei from './pages/sinki-user-sakusei.tsx'
 import SinkiSinsei from './pages/sinki-sinsei.tsx'
 import SyoninHuro from './pages/syounin-huro.tsx'
-import TizuGamen from './pages/tizu-gamen.tsx'
 
 function App() {
   return (
@@ -22,10 +21,6 @@ function App() {
           <div></div>
           <Link to="/syounin-huro">
             承認フロー
-          </Link>
-          <div></div>
-          <Link to="/tizu-gamen">
-            マップ
           </Link>
           <div></div>
           <Link to="/">
@@ -49,8 +44,6 @@ function App() {
         <Route path='/syounin-huro' element={<SyoninHuro></SyoninHuro>}>
         </Route>
 
-        <Route path='/tizu-gamen' element={<TizuGamen></TizuGamen>}>
-        </Route>
         
       </Routes>
       
