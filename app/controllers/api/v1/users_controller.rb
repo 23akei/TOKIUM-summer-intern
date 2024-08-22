@@ -11,6 +11,30 @@ module Api
         end
       end
 
+      # GET /api/v1/users/:role
+      def index
+        begin
+          users = User.where(role: params[:role])
+          render json: users, status: :ok
+        rescue ActiveRecord::RecordNotFound
+          render json: { error: 'Users not found' }, status: :not_found
+        rescue => e
+          render json: { error: e.message }, status: :internal_server_error
+        end
+      end
+
+      # GET /api/v1/users/:id
+      def show
+        begin
+          user = User.find_by(id: params[:id])
+          render json: user, status: :ok
+        rescue ActiveRecord::RecordNotFound
+          render json: { error: 'User not found' }, status: :not_found
+        rescue => e
+          render json: { error: e.message }, status: :internal_server_error
+        end
+      end
+
       private
 
       def user_params
