@@ -12,6 +12,11 @@ Rails.application.routes.draw do
       get 'application', to: 'shinseis#index'
       get 'application/:id', to: 'shinseis#show'
       get 'application/user/:user_id', to: 'shinseis#user'
+
+      # /flows
+      post 'flows', to: 'flows#create'
+      get 'flows', to: 'flows#index'
+      get 'flows/:id', to: 'flows#show'
     end
   end
 end

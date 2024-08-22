@@ -16,6 +16,7 @@ import { useState } from "react"
 
 export default function SinkiSinsei() {
 
+
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
@@ -29,10 +30,12 @@ export default function SinkiSinsei() {
 
   const registerSinsei = async () => {
     const res = await api.application.createApplication({title, date, description, user_id, kind, shop, amount, flow_id})
+
     console.log(res.data)
     // if (!res.data.date || !res.data.description) {
     //   alert((res.error.message))
     // }
+
 
     alert("Title is " + res.data.title + " description is " + res.data.description)
 }
@@ -76,6 +79,7 @@ const handleFlow_idChange = (event: React.ChangeEvent<HTMLInputElement>) => {
           <input value={amount} onChange={handleAmountChange}/></p>
           <p>flow_id：<br />
           <input value={flow_id} onChange={handleFlow_idChange}/></p>
+
           
           <button onClick={registerSinsei}>作成</button>
           
