@@ -14,6 +14,8 @@ docker compose run app rails db:setup
 docker compose run app rails db:migrate
 ```
 
+openapiのkjk
+
 ### サーバー起動
 ```bash
 docker compose build
