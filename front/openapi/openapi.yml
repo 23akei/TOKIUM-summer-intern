@@ -19,7 +19,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/CreateUser'
       responses:
         '201':
           description: User created successfully
@@ -27,11 +27,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  id:
-                    type: integer
-                  name:
-                    type: string
+                $ref: '#/components/schemas/User'
         '400':
           description: Bad request
           content:
@@ -50,7 +46,7 @@ paths:
                 properties:
                   message:
                     type: string
-  /users/{role}:
+  /users/role/{role}:
     get:
       summary: Get all users by role
       tags:
@@ -72,6 +68,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+        '404':
+          description: Users not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
         '500':
           description: Internal server error
           content:
@@ -430,10 +435,20 @@ paths:
                     type: string
 components:
   schemas:
+    CreateUser:
+      description: ユーザー作成
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          type: string
     User:
       description: ユーザー
       type: object
       properties:
+        id:
+          type: integer
         name:
           type: string
         role:
