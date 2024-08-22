@@ -518,6 +518,8 @@ components:
       description: 承認フロー
       type: object
       properties:
+        name:
+          type: string
         flow:
           type: array
           items:
@@ -528,12 +530,15 @@ components:
       description: 承認フローの条件
       type: object
       properties:
-        key:
-          type: string
-        value:
-          type: string
-        Condition:
-          type: string
+        condition:
+          type: object
+          properties:
+            key:
+              type: string
+            value:
+              type: string
+            condition:
+              type: string
     Approvers:
       description: 承認フローごとの承認者のリスト
       type: object
