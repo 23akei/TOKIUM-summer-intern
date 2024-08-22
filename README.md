@@ -14,7 +14,12 @@ docker compose run app rails db:setup
 docker compose run app rails db:migrate
 ```
 
-openapiのkjk
+openapiの使い方:  
+openapi.ymlをつかってapi.ts(apiをたたくための関数を含んだファイル)を生成  
+openapi.ymlが変更されたたびに下を走らせる  
+```bash
+npx swagger-typescript-api -p ./openapi/openapi.yml  -o ./openapi/ -n api.ts
+```
 
 ### サーバー起動
 ```bash
