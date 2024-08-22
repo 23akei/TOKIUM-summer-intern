@@ -9,22 +9,42 @@
  * ---------------------------------------------------------------
  */
 
+/** ユーザー作成 */
+export interface CreateUser {
+  name?: string;
+  role?: string;
+}
+
 /** ユーザー */
 export interface User {
+  id?: number;
   name?: string;
   role?: string;
 }
 
 /** 経費申請 */
 export interface Application {
-  name?: string;
+  title?: string;
   date?: string;
   description?: string;
   user_id?: number;
   kind?: string;
   shop?: string;
   amount?: number;
-  status?: string;
+  approval_state?: string;
+  flow_id?: number;
+}
+
+/** 経費申請作成 */
+export interface CreateApplication {
+  title?: string;
+  date?: string;
+  description?: string;
+  user_id?: number;
+  kind?: string;
+  shop?: string;
+  amount?: number;
+  flow_id?: number;
 }
 
 /** 承認フロー */
@@ -279,12 +299,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Create a new user
      * @request POST:/users
      */
-    createUser: (data: User, params: RequestParams = {}) =>
+    createUser: (data: CreateUser, params: RequestParams = {}) =>
       this.request<
-        {
-          id?: number;
-          name?: string;
-        },
+        User,
         {
           message?: string;
         }
@@ -301,9 +318,30 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Users
+     * @name GetUsers
+     * @summary Get all users
+     * @request GET:/users
+     */
+    getUsers: (params: RequestParams = {}) =>
+      this.request<
+        User[],
+        {
+          message?: string;
+        }
+      >({
+        path: `/users`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
      * @name GetUsersByRole
      * @summary Get all users by role
-     * @request GET:/users/{role}
+     * @request GET:/users/role/{role}
      */
     getUsersByRole: (role: string, params: RequestParams = {}) =>
       this.request<
@@ -312,7 +350,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           message?: string;
         }
       >({
-        path: `/users/${role}`,
+        path: `/users/role/${role}`,
         method: "GET",
         format: "json",
         ...params,
@@ -348,12 +386,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Create a new application
      * @request POST:/application
      */
-    createApplication: (data: Application, params: RequestParams = {}) =>
+    createApplication: (data: CreateApplication, params: RequestParams = {}) =>
       this.request<
-        {
-          id?: number;
-          name?: string;
-        },
+        Application,
         {
           message?: string;
         }
@@ -414,7 +449,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @tags Applications
      * @name GetApplicationsByUserId
      * @summary Get all applications by user ID
-     * @request GET:/application/{userId}
+     * @request GET:/application/user/{userId}
      */
     getApplicationsByUserId: (userId: number, params: RequestParams = {}) =>
       this.request<
@@ -423,7 +458,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           message?: string;
         }
       >({
-        path: `/application/${userId}`,
+        path: `/application/user/${userId}`,
         method: "GET",
         format: "json",
         ...params,
