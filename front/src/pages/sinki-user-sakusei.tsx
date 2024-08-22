@@ -1,8 +1,9 @@
 import { useState } from "react"
 import {Api} from "../../openapi/api"
 
+
 const api = new Api({
-    baseUrl: "http://localhost:3000/api/v1"
+    baseUrl: import.meta.env.VITE_API_BASE_URL,
 })
 
 export default function SinkiUserSakusei() {
