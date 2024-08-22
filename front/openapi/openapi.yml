@@ -421,9 +421,9 @@ paths:
                 properties:
                   message:
                     type: string
-  /approvals/{userId}:
+  /approvals/user/{userId}:
     get:
-      summary: 自身に承認の要求が来ている申請を取得
+      summary: 自身に承認の要求が来ている申請を取得(statusが'pending'でapproved_user_id'がuserIdなapprovalsを取得)
       tags:
         - Approvals
       operationId: getApprovalsByUserId
@@ -574,15 +574,18 @@ components:
           items:
             $ref: '#/components/schemas/User'
     Approval:
-      description: 申請状態
+      description: 承認
       type: object
       properties:
-        application_id:
+        shinsei_id:
           description: 申請ID
           type: integer
-        user_id:
+        step:
+          description: 承認フローのステップ
+          type: integer
+        approved_user_id:
           description: 承認者のユーザーID
           type: integer
         status:
-          description: 承認状態（approved, rejected）
+          description: 承認状態（approved, pending, rejected）
           type: string

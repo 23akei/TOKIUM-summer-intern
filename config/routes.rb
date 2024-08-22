@@ -17,6 +17,10 @@ Rails.application.routes.draw do
       post 'flows', to: 'flows#create'
       get 'flows', to: 'flows#index'
       get 'flows/:id', to: 'flows#show'
+
+      # /approvals
+      post 'approvals', to: 'approvals#create'
+      get 'approvals/user/:id', to: 'approvals#get_applications_by_user_needs_to_approve'
     end
   end
 end
