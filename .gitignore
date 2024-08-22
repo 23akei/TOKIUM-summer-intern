@@ -35,3 +35,6 @@
 yarn-debug.log*
 .yarn-integrity
 .browserslistrc
+
+# ignore shcema.rb
+db/schema.rb
