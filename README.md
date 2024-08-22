@@ -15,10 +15,10 @@ docker compose run app rails db:migrate
 ```
 
 openapiの使い方:  
-openapi.ymlをつかってapi.ts(apiをたたくための関数を含んだファイル)を生成  
+openapi.ymlをつかってapi.ts(apiをたたくための関数を含んだファイル)を生成できる  
 openapi.ymlが変更されたたびに下を走らせる  
 ```bash
-npx swagger-typescript-api -p ./openapi/openapi.yml  -o ./openapi/ -n api.ts
+yarn openapi
 ```
 
 ### サーバー起動
