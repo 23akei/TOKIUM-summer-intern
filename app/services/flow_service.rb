@@ -13,14 +13,19 @@ class FlowService
       if flow_params["approvers"]
         approvers = flow_params["approvers"]
         approvers.each do |approver_params|
-          approver = Approver.new(
-            flow_id: flow["id"].to_i,
-            user_id: approver_params["id"].to_i,
-            step: step
-          )
-          if approver.save != true
-            return nil, "Failed to create approver object"
-          end
+          begin
+            approver = Approver.new(
+              flow_id: flow["id"].to_i,
+              user_id: approver_params["id"].to_i,
+              step: step
+            )
+            if approver.save != true
+              return nil, "Failed to create approver object"
+            end
+          rescue ActiveRecord::InvalidForeignKey
+            return nil, "User not found"
+          rescue => e
+            return nil, e.message
         end
       elsif flow_params["condition"]
         cond = flow_params["condition"]
