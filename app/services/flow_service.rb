@@ -47,9 +47,25 @@ class FlowService
 
   def get_all_flows
     all_flows = Flow.all
+    flows = []
+    all_flows.each do |f|
+      flow = {}
+      flow[:id] = f.id
+      flow[:name] = f.name
+      flow[:approvers] = Approver.where(flow_id: f.id)
+      flow[:conditions] = Condition.where(flow_id: f.id)
+      flows.append(flow)
+    end
+    return flows
   end
 
   def get_flow_by_id(id)
-    @flow.find_by(id: id)
+    flow = Flow.find_by(id: id)
+    flow_obj = {}
+    flow_obj[:id] = flow.id
+    flow_obj[:name] = flow.name
+    flow_obj[:approvers] = Approver.where(flow_id: flow.id)
+    flow_obj[:conditions] = Condition.where(flow_id: flow.id)
+    return flow_obj
   end
 end

@@ -313,7 +313,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: '#/components/schemas/Flow'
+              $ref: '#/components/schemas/CreateFlow'
       responses:
         '201':
           description: Flow created successfully
@@ -518,6 +518,8 @@ components:
       description: 承認フロー
       type: object
       properties:
+        id:
+          type: integer
         name:
           type: string
         flow:
@@ -526,6 +528,18 @@ components:
             oneOf:
               - $ref: '#/components/schemas/Condition'
               - $ref: '#/components/schemas/Approvers'
+    CreateFlow:
+      description: 承認フロー作成
+      type: object
+      properties:
+        name:
+          type: string
+        flow:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Condition'
+              - $ref: '#/components/schemas/CreateApprovers'
     Condition:
       description: 承認フローの条件
       type: object
@@ -533,12 +547,24 @@ components:
         condition:
           type: object
           properties:
+            id:
+              type: integer
             key:
               type: string
             value:
               type: string
             condition:
               type: string
+            step:
+              type: integer
+    CreateApprovers:
+      description: 承認フローごとの承認者のリスト
+      type: object
+      properties:
+        approvers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
     Approvers:
       description: 承認フローごとの承認者のリスト
       type: object

@@ -16,7 +16,8 @@ module Api
       # GET /api/v1/flows
       def index
         begin
-          flows = FlowService.get_all_flows
+          flow_service = FlowService.new
+          flows = flow_service.get_all_flows
           render json: flows, status: :ok
         rescue ActiveRecord::RecordNotFound
           render json: { error: 'Flows not found' }, status: :not_found
@@ -28,7 +29,8 @@ module Api
       # GET /api/v1/flows/:id
       def show
         begin
-          flow = FlowService.get_flow_by_id(params[:id])
+          flow_service = FlowService.new
+          flow = flow_service.get_flow_by_id(params[:id])
           render json: flow, status: :ok
         rescue ActiveRecord::RecordNotFound
           render json: { error: 'Flow not found' }, status: :not_found
