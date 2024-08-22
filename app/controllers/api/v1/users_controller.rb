@@ -11,8 +11,18 @@ module Api
         end
       end
 
-      # GET /api/v1/users/:role
+      # GET /api/v1/users
       def index
+        begin
+          users = User.all
+          render json: users, status: :ok
+        rescue => e
+          render json: { error: e.message }, status: :internal_server_error
+        end
+      end
+
+      # GET /api/v1/users/:role
+      def get_by_role
         begin
           users = User.where(role: params[:role])
           render json: users, status: :ok
