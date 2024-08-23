@@ -29,6 +29,13 @@ class SubmittionService
       present_flow = conditions_and_approvers.find do |ca|
         ca[:step] == present_step
       end
+
+      # if the present step is not found, the flow is ended with success
+      if present_flow.nil?
+        submission.status = 'success'
+        break
+      end
+
       if present_flow.key?(:condition)
         # when condition
         condition_result = process_condition(present_flow[:condition], shinsei)
@@ -38,17 +45,29 @@ class SubmittionService
         else
           # when condition is not satisfied, the flow is ended with success
           submission.status = 'success'
-          submission.save
-          return {id: submission.id}, :ok
+          break
       elsif present_flow.key?(:approver)
         # when approver
-        approver_result = process_approver(present_flow[:approver], submission)
+        approver_result, pendings = process_approver(present_flow[:approver], submission)
+        if pendings
+          # when any approver is pending, the flow is ended with pending
+          submission.status = 'pending'
+          break
+        elsif approver_result
+          # when all approvers approve, the flow is continued to the next step
+          present_step += 1
+        else
+          # when any approver disapproves, the flow is ended with failure
+          submission.status = 'failure'
+          break
+        end
       end
     end
 
     # update the submission
     submission.step = present_step
     submission.save
+    return {id: submission.id}, :ok
   end
 
   def process_condition(condition, shinsei)
@@ -71,6 +90,7 @@ class SubmittionService
 
   def process_approver(approvers, shinsei)
     result = true
+    pendings = false
     approvers.each do |approver|
       # find approval for this approver
       approvals = Approval.find_by(user_id: approver.user_id, shinsei_id: shinsei.id, step: submission.step)
@@ -86,7 +106,8 @@ class SubmittionService
       end
       # check the approval status
       result &&= (approval.status == 'approve')
+      pendings ||= (approval.status == 'pending')
     end
-    return result
+    return result, pendings
   end
 end
