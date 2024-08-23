@@ -13,9 +13,9 @@ Rails.application.routes.draw do
       get 'application/:id', to: 'shinseis#show'
       get 'application/user/:user_id', to: 'shinseis#user'
 
-      # /submissions
-      post 'submissions', to: 'submissions#create'
-      get 'submissions/user/:user_id', to: 'submissions#user'
+      # /submittions
+      post 'submittions', to: 'submittions#create'
+      get 'submittions/user/:user_id', to: 'submittions#user'
 
       # /flows
       post 'flows', to: 'flows#create'

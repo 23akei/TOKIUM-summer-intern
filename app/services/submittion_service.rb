@@ -1,9 +1,15 @@
 class SubmittionService
-  def proceed_flow(submission)
+  def proceed_flow(submittion)
     # check the flow
     begin
-      shinsei = Shinsei.find_by(id: submission.shinsei_id)
+      shinsei = Shinsei.find_by(id: submittion.shinsei_id)
+      if shinsei.nil?
+        return { error: 'Shinsei not found' }, :not_found
+      end
       flow = Flow.find_by(id: shinsei.flow_id)
+      if flow.nil?
+        return { error: 'Flow not found' }, :not_found
+      end
       conditions = Condition.where(flow_id: flow.id)
       approvers = Approver.where(flow_id: flow.id)
     rescue ActiveRecord::RecordNotFound
@@ -22,7 +28,7 @@ class SubmittionService
     conditions_and_approvers = s_conditions + s_approvers
     conditions_and_approvers.sort_by! { |ca| ca[:step] }
 
-    present_step = submission.step
+    present_step = submittion.step
     # succeed the flow
     loop do
       # pick up the present step
@@ -32,7 +38,7 @@ class SubmittionService
 
       # if the present step is not found, the flow is ended with success
       if present_flow.nil?
-        submission.status = 'success'
+        submittion.status = 'success'
         break
       end
 
@@ -44,30 +50,31 @@ class SubmittionService
           present_step += 1
         else
           # when condition is not satisfied, the flow is ended with success
-          submission.status = 'success'
+          submittion.status = 'success'
           break
+        end
       elsif present_flow.key?(:approver)
         # when approver
-        approver_result, pendings = process_approver(present_flow[:approver], submission)
+        approver_result, pendings = process_approver(present_flow[:approver], submittion)
         if pendings
           # when any approver is pending, the flow is ended with pending
-          submission.status = 'pending'
+          submittion.status = 'pending'
           break
         elsif approver_result
           # when all approvers approve, the flow is continued to the next step
           present_step += 1
         else
           # when any approver disapproves, the flow is ended with failure
-          submission.status = 'failure'
+          submittion.status = 'failure'
           break
         end
       end
     end
 
-    # update the submission
-    submission.step = present_step
-    submission.save
-    return {id: submission.id}, :ok
+    # update the submittion
+    submittion.step = present_step
+    submittion.save
+    return {id: submittion.id}, :ok
   end
 
   def process_condition(condition, shinsei)
@@ -93,13 +100,13 @@ class SubmittionService
     pendings = false
     approvers.each do |approver|
       # find approval for this approver
-      approvals = Approval.find_by(user_id: approver.user_id, shinsei_id: shinsei.id, step: submission.step)
+      approvals = Approval.find_by(user_id: approver.user_id, shinsei_id: shinsei.id, step: submittion.step)
       # if returns vacant list, create approval object
       if approvals.empty?
         approval = Approval.new(
           user_id: approver.user_id,
           shinsei_id: shinsei.id,
-          step: submission.step,
+          step: submittion.step,
           status: 'pending'
         )
         approval.save
