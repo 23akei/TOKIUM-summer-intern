@@ -29,7 +29,11 @@ module Api
       def user
         begin
           submittions = Submittion.find_by(user_id: params[:user_id], status: 'pending')
-          render json: submittions, status: :ok
+          if submittions.nil?
+            render json: [], status: :ok
+          else
+            render json: submittions, status: :ok
+          end
         rescue ActiveRecord::RecordNotFound
           render json: { error: 'Submittions not found' }, status: :not_found
         rescue => e
