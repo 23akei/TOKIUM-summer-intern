@@ -14,13 +14,6 @@ docker compose run app rails db:setup
 docker compose run app rails db:migrate
 ```
 
-openapiの使い方:  
-openapi.ymlをつかってapi.ts(apiをたたくための関数を含んだファイル)を生成できる  
-openapi.ymlが変更されたたびに下を走らせる  
-```bash
-yarn openapi
-```
-
 ### サーバー起動
 ```bash
 docker compose build
@@ -29,3 +22,29 @@ docker compose up -d
 
 ### ローカルサーバーへのアクセス
 すべてが正常に動作している場合、ブラウザで http://localhost:3000 にアクセスして、アプリケーションが期待通りに動作しているか確認
+
+## 開発時に適宜行うコマンド
+
+### OpenAPIからapi.tsを生成
+openapi.ymlをつかってapi.ts(apiをたたくための関数を含んだファイル)を生成できる
+openapi.ymlが変更されたたびに下を走らせる
+```bash
+yarn openapi
+```
+
+###　モデルの追加
+モデルの追加を含む変更があった場合、DBのマイグレーションを行う。
+コンテナ内なら
+```bash
+bin/rails db:migrate
+```
+コンテナ外なら
+```bash
+docker compose run app rails db:migrate
+```
+
+#### （バックエンド開発者向け）モデルの追加方法
+バックエンドでモデルを追加する場合、下記のコマンドをappコンテナ内で実行する
+```bash
+bin/rails generate model モデル名 カラム名:型 カラム名:型 ...
+```
