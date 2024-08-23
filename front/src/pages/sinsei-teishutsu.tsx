@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import {api} from "../const"
 import { Application } from "../../openapi/api";
+import { Context } from "../Context";
 
 
 export default function SinseiTeishutsu() {
-  const [userID, setUserID] = useState<number>();
+  const {userID, setUserID} = useContext(Context)
   const [applications, setApplications] = useState<Application[]>([]);
   const [selectedApplicationIDs, setSelectedApplicationIDs] = useState<number[]>([]);
 
@@ -22,9 +23,9 @@ export default function SinseiTeishutsu() {
 
   const submitApplications = async () => {
     selectedApplicationIDs.forEach(async (application_id) => {
-      api.submittions.createSubmittion({shinsei_id: application_id, user_id: userID}).then((res) => {
+      api.submittions.createSubmittion({shinsei_id: application_id, user_id: userID}).then((res: any) => {
         console.log(res);
-      }).catch((e) => {
+      }).catch((e: any) => {
         console.log(e)
       });
     });
@@ -44,8 +45,6 @@ export default function SinseiTeishutsu() {
 
   return (
     <>
-      <span>user id:</span>
-      <input type="number" value={userID} onChange={(event) => setUserID(event.target.valueAsNumber)} />
       <div>
       <p>申請提出画面</p>
       <button onClick={submitApplications}>提出</button>
