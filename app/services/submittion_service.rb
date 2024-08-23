@@ -1,5 +1,5 @@
 class SubmittionService
-  def invoke_flow(submission)
+  def proceed_flow(submission)
     # check the flow
     begin
       shinsei = Shinsei.find_by(id: submission.shinsei_id)
@@ -42,27 +42,51 @@ class SubmittionService
           return {id: submission.id}, :ok
       elsif present_flow.key?(:approver)
         # when approver
-        approver = present_flow[:approver]
+        approver_result = process_approver(present_flow[:approver], submission)
       end
     end
+
+    # update the submission
+    submission.step = present_step
+    submission.save
   end
 
   def process_condition(condition, shinsei)
-    include ComparisonOperators
     case condition.condition
-    when OPERATORS[:neq]
+    when Comparision::OPERATORS[:neq]
       return shinsei[condition.key] != condition.value
-    when OPERATORS[:eq]
+    when Comparision::OPERATORS[:eq]
       return shinsei[condition.key] == condition.value
-    when OPERATORS[:ge]
+    when Comparision::OPERATORS[:ge]
       return shinsei[condition.key] >= condition.value
-    when OPERATORS[:le]
+    when Comparision::OPERATORS[:le]
       return shinsei[condition.key] <= condition.value
-    when OPERATORS[:gt]
+    when Comparision::OPERATORS[:gt]
       return shinsei[condition.key] > condition.value
-    when OPERATORS[:lt]
+    when Comparision::OPERATORS[:lt]
       return shinsei[condition.key] < condition.value
     end
     raise 'Invalid condition'
+  end
+
+  def process_approver(approvers, shinsei)
+    result = true
+    approvers.each do |approver|
+      # find approval for this approver
+      approvals = Approval.find_by(user_id: approver.user_id, shinsei_id: shinsei.id, step: submission.step)
+      # if returns vacant list, create approval object
+      if approvals.empty?
+        approval = Approval.new(
+          user_id: approver.user_id,
+          shinsei_id: shinsei.id,
+          step: submission.step,
+          status: 'pending'
+        )
+        approval.save
+      end
+      # check the approval status
+      result &&= (approval.status == 'approve')
+    end
+    return result
   end
 end
