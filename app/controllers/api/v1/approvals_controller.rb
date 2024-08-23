@@ -1,15 +1,23 @@
 module Api
   module V1
     class ApprovalsController < ApplicationController
-      # POST /api/v1/approval
-      def create
+      # PUT /api/v1/approval/:id
+      def update
         begin
-          approval = Approval.new(approval_params)
-          if approval.save
-            render json: approval, status: :created
+          approval = Approval.find_by(id: params[:id])
+          if approval.update(approval_params)
+            # proceed the flow
+            submittion_service = SubmittionService.new
+            ret, status = submittion_service.proceed_flow(created)
+            if status != :ok
+              render json: { error: ret }, status: status
+            end
+            render json: {id: approval.id}, status: :ok
           else
             render json: approval.errors, status: :unprocessable_entity
           end
+        rescue ActiveRecord::RecordNotFound
+          render json: { error: 'Approval not found' }, status: :not_found
         rescue => e
           render json: { error: e.message }, status: :internal_server_error
         end
