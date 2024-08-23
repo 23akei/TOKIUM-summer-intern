@@ -39,6 +39,16 @@ module Api
         end
       end
 
+      # GET /api/v1/flows/condition_keys
+      def condition_keys
+        begin
+          keys = Shinsei.column_names
+          render json: {key: keys}, status: :ok
+        rescue => e
+          render json: { error: e.message }, status: :internal_server_error
+        end
+      end
+
       private
 
       # shape of the params: list of condition and list of approvers
