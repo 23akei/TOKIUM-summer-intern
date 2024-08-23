@@ -38,3 +38,6 @@ yarn-debug.log*
 
 # ignore shcema.rb
 db/schema.rb
+
+#openapi
+front/openapi/api.ts
