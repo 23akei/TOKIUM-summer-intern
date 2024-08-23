@@ -43,7 +43,7 @@ module Api
       def condition_keys
         begin
           keys = Shinsei.column_names
-          render json: {keys: keys}, status: :ok
+          render json: {key: keys}, status: :ok
         rescue => e
           render json: { error: e.message }, status: :internal_server_error
         end
