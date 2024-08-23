@@ -3,21 +3,21 @@ module Api
     class SubmittionsController < ApplicationController
       # POST /api/v1/submissions
       def create
-        new_submittion_params = {
-          shinsei_id: submittion_params[:application_id],
+        created = Submittion.new(
+          shinsei_id: submittion_params[:shinsei_id],
           user_id: submittion_params[:user_id],
           status: 'pending',
           step: 1,
-        }
-        created = Submittion.new(new_submittion_params)
+        )
 
-        if created.save == false
+        if !created.save
           render json: { error: 'Submittion not created' }, status: :unprocessable_entity
         end
-
+        created_submittion = Submittion.find_by(id: created.id)
+        puts created_submittion.inspect
         # proceed the flow
         submittion_service = SubmittionService.new
-        ret, status = submittion_service.proceed_flow(created)
+        ret, status = submittion_service.proceed_flow(created_submittion)
         if status != :ok
           render json: { error: ret }, status: status
         else
@@ -40,7 +40,7 @@ module Api
       private
 
       def submittion_params
-        params.require(:submittion).permit(:application_id, :user_id)
+        params.require(:submittion).permit(:shinsei_id, :user_id)
       end
     end
   end

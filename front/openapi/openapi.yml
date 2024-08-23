@@ -291,7 +291,7 @@ paths:
             schema:
               type: object
               properties:
-                application_id:
+                shinsei_id:
                   type: integer
                 user_id:
                   type: integer
