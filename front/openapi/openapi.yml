@@ -380,6 +380,28 @@ paths:
                 properties:
                   message:
                     type: string
+  /flows/condition_keys:
+    get:
+      summary: Get candidate of keys in conditions for flow
+      tags:
+        - Flows
+      operationId: getConditions
+      responses:
+        '200':
+          description: Conditions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Keys'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /approvals:
     post:
       summary: Create a new approval
@@ -589,3 +611,11 @@ components:
         status:
           description: 承認状態（approved, pending, rejected）
           type: string
+    Keys:
+      description: 条件のキー
+      type: object
+      properties:
+        key:
+          type: array
+          items:
+            type: string
