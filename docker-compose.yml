@@ -72,7 +72,7 @@ services:
       dockerfile: docker/front/Dockerfile
     command: >
       sh -c
-      "yarn install &&
+      "yarn install && yarn openapi &&
       yarn dev"
     volumes:
       - ./front:/app
