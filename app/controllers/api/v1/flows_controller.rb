@@ -49,6 +49,16 @@ module Api
         end
       end
 
+      # GET /api/v1/flows/condition_comparators
+      def condition_comparators
+        begin
+          comparators = Comparision::OPERATORS.keys
+          render json: {comparator: comparators}, status: :ok
+        rescue => e
+          render json: { error: e.message }, status: :internal_server_error
+        end
+      end
+
       private
 
       # shape of the params: list of condition and list of approvers

@@ -476,6 +476,33 @@ paths:
                 properties:
                   message:
                     type: string
+  /flows/condition_comparators:
+    get:
+      summary: Get candidate of comparators in conditions for flow
+      tags:
+        - Flows
+      operationId: getComparators
+      responses:
+        '200':
+          description: Comparisons retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comparisons:
+                    type: array
+                    items:
+                      type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /approvals:
     post:
       summary: Create a new approval

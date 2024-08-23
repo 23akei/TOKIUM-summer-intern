@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       post 'flows', to: 'flows#create'
       get 'flows', to: 'flows#index'
       get 'flows/condition_keys', to: 'flows#condition_keys'
+      get 'flows/condition_comparators', to: 'flows#condition_comparators'
       get 'flows/:id', to: 'flows#show'
 
       # /approvals

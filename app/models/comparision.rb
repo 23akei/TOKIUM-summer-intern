@@ -1,10 +1,10 @@
-module ComparisonOperators
+class Comparision < ApplicationRecord
   OPERATORS = {
     eq: 'eq',
     neq: 'neq',
     gt: 'gt',
-    lt: 'lt'
+    lt: 'lt',
     ge: 'ge',
-    le: 'le'
+    le: 'le',
   }.freeze
 end
