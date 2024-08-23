@@ -7,9 +7,7 @@ export default function SinseiTeishutsu() {
   const [userID, setUserID] = useState<number>();
   const [applications, setApplications] = useState<Application[]>([]);
   const [selectedApplicationIDs, setSelectedApplicationIDs] = useState<number[]>([]);
-  
-  
-  
+
   const onSelectApplication = (checked: boolean, application_id : number) => {
     if (checked) {
       if (!selectedApplicationIDs.includes(application_id)) {
@@ -20,12 +18,16 @@ export default function SinseiTeishutsu() {
         selectedApplicationIDs.filter((id) => id != application_id)
       )
     }
-    
   }
-  
+
   const submitApplications = async () => {
-    //TOOD
-    // const res = await api.application.createApplication();
+    selectedApplicationIDs.forEach(async (application_id) => {
+      api.submittions.createSubmittion({shinsei_id: application_id, user_id: userID}).then((res) => {
+        console.log(res);
+      }).catch((e) => {
+        console.log(e)
+      });
+    });
   }
 
 
@@ -47,14 +49,19 @@ export default function SinseiTeishutsu() {
       <div>
       <p>申請提出画面</p>
       <button onClick={submitApplications}>提出</button>
-      
-      {applications.map((application) =>  (
-        <div style={{border: "1px solid black", display: "flex", justifyContent: "space-between"}}>
-          {/* <input type="checkbox" checked={selectedApplicationIDs.includes(application.id)} onChange={(e) => {onSelectApplication(e.target.checked, application.id)}}/> */}
-          <div>title:{application.title}</div>
 
-          <div>userid:{application.user_id}</div>
-          <div>state:{application.approval_state}</div>
+      {applications.map((application) =>  (
+        <div key={application.id} style={{border: "1px solid black", display: "flex", justifyContent: "space-between"}}>
+          <input
+            type="checkbox"
+            onChange={(e) => {onSelectApplication(e.target.checked, application.id as number)}}
+            key={application.id}
+          />
+          {Object.entries(application).map(([k, value]) => (
+            <div key={k}>
+              <span>{value}</span>
+            </div>
+          ))}
         </div>
       ))}
 
