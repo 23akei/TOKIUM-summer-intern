@@ -13,10 +13,15 @@ Rails.application.routes.draw do
       get 'application/:id', to: 'shinseis#show'
       get 'application/user/:user_id', to: 'shinseis#user'
 
+      # /submissions
+      post 'submissions', to: 'submissions#create'
+      get 'submissions/user/:user_id', to: 'submissions#user'
+
       # /flows
       post 'flows', to: 'flows#create'
       get 'flows', to: 'flows#index'
       get 'flows/condition_keys', to: 'flows#condition_keys'
+      get 'flows/condition_comparators', to: 'flows#condition_comparators'
       get 'flows/:id', to: 'flows#show'
 
       # /approvals
