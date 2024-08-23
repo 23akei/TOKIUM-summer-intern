@@ -53,7 +53,7 @@ module Api
       def condition_comparators
         begin
           comparators = Comparision::OPERATORS.keys
-          render json: {comparator: comparators}, status: :ok
+          render json: {comparators: comparators}, status: :ok
         rescue => e
           render json: { error: e.message }, status: :internal_server_error
         end

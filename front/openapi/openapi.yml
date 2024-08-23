@@ -484,13 +484,13 @@ paths:
       operationId: getComparators
       responses:
         '200':
-          description: Comparisons retrieved successfully
+          description: Comparators retrieved successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  comparisons:
+                  comparators:
                     type: array
                     items:
                       type: string
