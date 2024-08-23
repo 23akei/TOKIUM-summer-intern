@@ -78,7 +78,7 @@ const closeModal = () => {
           <input value={description} onChange={(event)=>{setDescription(event.target.value)}}/></p>
           <p>ユーザーID：<br />
           <input value={user_id} onChange={handleUserIdChange}/></p>
-          <p>種類：<br />
+          <p>科目：<br />
           <input value={kind} onChange={(event)=>{setKind(event.target.value)}}/></p>
           <p>店舗：<br />
           <input value={shop} onChange={(event)=>{setShop(event.target.value)}}/></p>
