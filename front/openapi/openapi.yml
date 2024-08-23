@@ -278,6 +278,80 @@ paths:
                 properties:
                   message:
                     type: string
+  /submittions:
+    post:
+      summary: Create a new submittion
+      tags:
+        - Submittions
+      operationId: createSubmittion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                application_id:
+                  type: integer
+                user_id:
+                  type: integer
+      responses:
+        '201':
+          description: Submittion created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Submittion'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /submittions/user/{userId}:
+    get:
+      summary: Get all submittions by user ID
+      tags:
+        - Submittions
+      operationId: getSubmittionsByUserId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user to get submittions
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Submittions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /flows:
     get:
       summary: Get all flows
@@ -619,3 +693,15 @@ components:
           type: array
           items:
             type: string
+    Submittion:
+      description: 申請提出
+      type: object
+      properties:
+        shinsei_id:
+          type: integer
+        user_id:
+          type: integer
+        status:
+          type: string
+        step:
+          type: integer
