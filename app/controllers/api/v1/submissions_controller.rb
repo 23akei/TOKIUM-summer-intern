@@ -15,17 +15,19 @@ module Api
           render json: { error: 'Submission not created' }, status: :unprocessable_entity
         end
 
-        # check the flow
+        # proceed the flow
         submittion_service = SubmittionService.new
-        submittion_service.invoke_flow(created)
-
+        ret, status = submittion_service.proceed_flow(created)
+        if status != :ok
+          render json: { error: ret }, status: status
+        end
         render json: {id: created.id}, status: :created
       end
 
       # GET /api/v1/submissions/user/:user_id
       def user
         begin
-          submissions = Submission.find_by(user_id: params[:user_id])
+          submissions = Submission.find_by(user_id: params[:user_id], status: 'pending')
           render json: submissions, status: :ok
         rescue ActiveRecord::RecordNotFound
           render json: { error: 'Submissions not found' }, status: :not_found

@@ -25,7 +25,7 @@ Rails.application.routes.draw do
       get 'flows/:id', to: 'flows#show'
 
       # /approvals
-      post 'approvals', to: 'approvals#create'
+      put 'approvals', to: 'approvals#update'
       get 'approvals/user/:id', to: 'approvals#get_applications_by_user_needs_to_approve'
     end
   end

@@ -1,5 +1,5 @@
 class SubmittionService
-  def invoke_flow(submission)
+  def proceed_flow(submission)
     # check the flow
     begin
       shinsei = Shinsei.find_by(id: submission.shinsei_id)
@@ -29,6 +29,13 @@ class SubmittionService
       present_flow = conditions_and_approvers.find do |ca|
         ca[:step] == present_step
       end
+
+      # if the present step is not found, the flow is ended with success
+      if present_flow.nil?
+        submission.status = 'success'
+        break
+      end
+
       if present_flow.key?(:condition)
         # when condition
         condition_result = process_condition(present_flow[:condition], shinsei)
@@ -38,31 +45,69 @@ class SubmittionService
         else
           # when condition is not satisfied, the flow is ended with success
           submission.status = 'success'
-          submission.save
-          return {id: submission.id}, :ok
+          break
       elsif present_flow.key?(:approver)
         # when approver
-        approver = present_flow[:approver]
+        approver_result, pendings = process_approver(present_flow[:approver], submission)
+        if pendings
+          # when any approver is pending, the flow is ended with pending
+          submission.status = 'pending'
+          break
+        elsif approver_result
+          # when all approvers approve, the flow is continued to the next step
+          present_step += 1
+        else
+          # when any approver disapproves, the flow is ended with failure
+          submission.status = 'failure'
+          break
+        end
       end
     end
+
+    # update the submission
+    submission.step = present_step
+    submission.save
+    return {id: submission.id}, :ok
   end
 
   def process_condition(condition, shinsei)
-    include ComparisonOperators
     case condition.condition
-    when OPERATORS[:neq]
+    when Comparision::OPERATORS[:neq]
       return shinsei[condition.key] != condition.value
-    when OPERATORS[:eq]
+    when Comparision::OPERATORS[:eq]
       return shinsei[condition.key] == condition.value
-    when OPERATORS[:ge]
+    when Comparision::OPERATORS[:ge]
       return shinsei[condition.key] >= condition.value
-    when OPERATORS[:le]
+    when Comparision::OPERATORS[:le]
       return shinsei[condition.key] <= condition.value
-    when OPERATORS[:gt]
+    when Comparision::OPERATORS[:gt]
       return shinsei[condition.key] > condition.value
-    when OPERATORS[:lt]
+    when Comparision::OPERATORS[:lt]
       return shinsei[condition.key] < condition.value
     end
     raise 'Invalid condition'
+  end
+
+  def process_approver(approvers, shinsei)
+    result = true
+    pendings = false
+    approvers.each do |approver|
+      # find approval for this approver
+      approvals = Approval.find_by(user_id: approver.user_id, shinsei_id: shinsei.id, step: submission.step)
+      # if returns vacant list, create approval object
+      if approvals.empty?
+        approval = Approval.new(
+          user_id: approver.user_id,
+          shinsei_id: shinsei.id,
+          step: submission.step,
+          status: 'pending'
+        )
+        approval.save
+      end
+      # check the approval status
+      result &&= (approval.status == 'approve')
+      pendings ||= (approval.status == 'pending')
+    end
+    return result, pendings
   end
 end
