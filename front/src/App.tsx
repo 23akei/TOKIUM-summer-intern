@@ -5,9 +5,18 @@ import SinkiUserSakusei from './pages/sinki-user-sakusei.tsx'
 import SinkiSinsei from './pages/sinki-sinsei.tsx'
 import SyoninHuro from './pages/syounin-huro.tsx'
 import SinseiTeishutsu from './pages/sinsei-teishutsu.tsx'
+import { Context } from './Context.tsx'
+import { useState } from 'react'
 
 function App() {
+  const [userID, setUserID] = useState(0)
+
   return (
+
+    
+    <Context.Provider value={{ userID, setUserID }}>
+      <span>user id:</span>
+      <input type="number" value={userID} onChange={(event) => setUserID(event.target.valueAsNumber)} />
 
     <BrowserRouter>
       <>
@@ -57,6 +66,7 @@ function App() {
      </>
 
     </BrowserRouter> 
+    </Context.Provider>
   )
 }
 
