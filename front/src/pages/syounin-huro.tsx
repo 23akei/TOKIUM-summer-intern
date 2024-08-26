@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react"
-import {api} from "../const"
+import { api } from "../const"
 import { User } from "../../openapi/api";
-import { Condition } from "../../openapi/api";
+// import { Condition } from "../../openapi/api";
 import { CreateFlow } from "../../openapi/api";
-import { Flow } from "../../openapi/api";
+// import { Flow } from "../../openapi/api";
 
 // key=項目, value=閾値, condition=不等号,
 const conditionLabels: Record<string, string> = {
@@ -22,53 +22,69 @@ export default function SyouninHuro() {
     const [key, setKey] = useState<string[]>([]);
     const [comparators, setComparators] = useState<string[]>([]);
 
-    const [selectedKey, setSelectedKey] = useState<string>("");
-    const [selectedComp, setSelectedComp] = useState<string>("");
-    const [selectedValue, setSelectedValue] = useState<string>("");
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([""]);
+    const [selectedComps, setSelectedComps] = useState<string[]>([""]);
+    const [selectedValues, setSelectedValues] = useState<string[]>([""]);
 
-    const [userID, setUserID] = useState<number | undefined>();
+    // const [userID, setuserID] = useState<number | undefined>();
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
     const [flow, setFlow] = useState<CreateFlow | undefined>()
-    const [condition, setCondition] = useState<Condition | undefined>()
+    // const [condition, setCondition] = useState<Condition | undefined>()
 
-    // const [flows, setFlows] = useState<Flow[]>(); // 型を明示的に指定
-
-    // key, 比較演算子, 取得
     useEffect(() => {
         const fetchFlows = async () => {
             try {
                 const res0 = await api.flows.getConditions()
                 const res1 = await api.flows.getComparators()
                 const res2 = await api.users.getUsers()
-                // const res = await api.flows.getFlows()
 
                 setKey(res0.data.key || []);
-                setComparators(res1.data.comparators || []); // APIレスポンスをflowsステートに保存
+                setComparators(res1.data.comparators || []);
                 setUsers(res2.data || [])
             } catch (error) {
                 console.error('Error fetching flows:', error);
             }
         };
 
-        fetchFlows(); // コンポーネントマウント時にAPI呼び出しを実行
+        fetchFlows();
     }, []);
 
-
-    // flowsを記録
     const registerFlows = async () => {
-        console.log("init of registerFlows");
+        // console.log("init of registerFlows");
+        console.log(selectedUsers)
+        if (selectedUsers.length === 0) {
+            alert("承認者を1人以上選択してください。");
+            return; // 処理を中断
+        }
+        if (!title){
+            alert("タイトルを入力してください。");
+            return;
+        }
+        for (let i = 0; i < selectedKeys.length; i++) {
+            const key = selectedKeys[i];
+            const condition = selectedComps[i];
+            const value = selectedValues[i];
+
+            if (!key || !condition || !value  || !title ) {
+                alert(`条件のすべてのフィールドを入力してください。`);
+                return;  
+            } 
+
+        }
+
+
+        const flowConditions = selectedKeys.map((key, index) => ({
+            key: key,
+            condition: selectedComps[index],
+            value: selectedValues[index],
+        }));
+
         const create_flow: CreateFlow = {
             name: title,
             flow: [
-                {
-                    condition: {
-                        key: selectedKey,
-                        condition: selectedComp,
-                        value: selectedValue,
-                    },
-                },
+                ...flowConditions.map(condition => ({ condition })),
                 {
                     approvers: selectedUsers,
                 },
@@ -78,9 +94,10 @@ export default function SyouninHuro() {
         setFlow(create_flow);
 
         try {
+            
             const response = await api.flows.createFlow(create_flow);
             if (response.ok) {
-                alert("Flow created: " + response.data);
+                alert("Flow created: " + '"' + create_flow.name + '"');
             } else {
                 alert("Failed to create flow: " + response.data);
             }
@@ -88,36 +105,50 @@ export default function SyouninHuro() {
             console.error("Failed to create flow:", error);
         }
     };
-    
+
     const handleChange0 = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(event.target.value);
     };
 
-    const handleChange1 = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedKey(event.target.value);
+    const handleKeyChange = (index: number, value: string) => {
+        const newSelectedKeys = [...selectedKeys];
+        newSelectedKeys[index] = value;
+        setSelectedKeys(newSelectedKeys);
     };
 
-    const handleChange2 = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedComp(event.target.value);
+    const handleCompChange = (index: number, value: string) => {
+        const newSelectedComps = [...selectedComps];
+        newSelectedComps[index] = value;
+        setSelectedComps(newSelectedComps);
     };
 
-    const handleChange3 = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValue(event.target.value);
-        // console.log("Input value:", event.target.value);
+    const handleValueChange = (index: number, value: string) => {
+        const newSelectedValues = [...selectedValues];
+        newSelectedValues[index] = value;
+        setSelectedValues(newSelectedValues);
     };
 
-    const UserSerach = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        // setUserID(parseInt(event.target.value));
-        // if (users !== undefined) {
-        //     setSelectedUsers(users.filter(user => user.id === userID))
-        // }
+    const addCondition = () => {
+        setSelectedKeys([...selectedKeys, ""]);
+        setSelectedComps([...selectedComps, ""]);
+        setSelectedValues([...selectedValues, ""]);
+    };
 
-        // const selectedID = parseInt(event.target.value);
-        // setUserID(selectedID);
-        // if (users) {
-        //     setSelectedUsers(users.filter((user) => user.id === selectedID));
-        // }
+    const removeCondition = (index: number) => {
+        const newSelectedKeys = [...selectedKeys];
+        const newSelectedComps = [...selectedComps];
+        const newSelectedValues = [...selectedValues];
 
+        newSelectedKeys.splice(index, 1);
+        newSelectedComps.splice(index, 1);
+        newSelectedValues.splice(index, 1);
+
+        setSelectedKeys(newSelectedKeys);
+        setSelectedComps(newSelectedComps);
+        setSelectedValues(newSelectedValues);
+    };
+
+    const UserSearch = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedUserId = parseInt(event.target.value);
         const user = users.find(user => user.id === selectedUserId);
         if (user && !selectedUsers.includes(user)) {
@@ -129,58 +160,53 @@ export default function SyouninHuro() {
         setSelectedUsers(selectedUsers.filter(user => user.id !== userId));
     };
 
+    // ログ
     useEffect(() => {
         if (flow) {
             console.log("Updated flow:", flow);
         }
     }, [flow]);
 
-    // console.log(users)
-   
-
     return (
         <>
             <div>
-
-                
                 <p>承認フロー</p>
-                {/*
-                <p>キー追加</p>
-                <input value={key} onChange={(event)=>{setCondition(event.target.value)}}></input> 
-                <button onClick={registerFlows}>保存</button>
-                */}
                 <p>タイトル</p>
                 <input value={title} onChange={handleChange0}></input>
                 <p>条件選択</p>
-                <select value={selectedKey} onChange={handleChange1}>
-                    <option value="">--選択--</option>
-                    {key !== undefined && key.map((ke) => {
-                        return (
-                            <option key={ke} value={ke}>{ke}</option>
-                        );
-                    })}
-                </select>
 
-                <select value={selectedComp} onChange={handleChange2}>
-                    <option value="">--選択--</option>
-                    {comparators !== undefined && comparators.map((comp) => {
-                        return (
-                            <option key={comp} value={comp}>
-                                {conditionLabels[comp]}
-                            </option>
-                        );
-                    })}
-                </select>
+                {selectedKeys.map((_, index) => (
+                    <div key={index}>
+                        <select value={selectedKeys[index]} onChange={(e) => handleKeyChange(index, e.target.value)}>
+                            <option value="">--選択--</option>
+                            {key.map((ke) => (
+                                <option key={ke} value={ke}>{ke}</option>
+                            ))}
+                        </select>
 
-                <input
-                type="text"
-                value={selectedValue}
-                onChange={handleChange3}
-                placeholder="Enter text"
-                />
+                        <select value={selectedComps[index]} onChange={(e) => handleCompChange(index, e.target.value)}>
+                            <option value="">--選択--</option>
+                            {comparators.map((comp) => (
+                                <option key={comp} value={comp}>
+                                    {conditionLabels[comp]}
+                                </option>
+                            ))}
+                        </select>
+
+                        <input
+                            type="text"
+                            value={selectedValues[index]}
+                            onChange={(e) => handleValueChange(index, e.target.value)}
+                            placeholder="Enter text"
+                        />
+                        <button onClick={() => removeCondition(index)}>削除</button>
+                    </div>
+                ))}
+
+                <button onClick={addCondition}>条件を追加</button>
 
                 <p>承認者</p>
-                <select value={userID ?? ""} onChange={UserSerach}>
+                <select onChange={UserSearch}>
                     <option value="">--選択--</option>
                     {users.map((user) => (
                         <option key={user.id} value={user.id}>{user.id}: {user.name}</option>
@@ -192,8 +218,7 @@ export default function SyouninHuro() {
                         if (user.id === undefined) {
                             return null; 
                         }
-                        
-                        // インデックスに基づいて順番を表示
+
                         const orderLabel = `${index + 1}人目`;
 
                         return (
@@ -204,10 +229,7 @@ export default function SyouninHuro() {
                     })}
                 </ul>
 
-
                 <button onClick={registerFlows}>保存</button>
-                
-                
             </div>
         </>
     )
