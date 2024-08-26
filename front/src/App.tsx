@@ -8,6 +8,7 @@ import SinseiTeishutsu from './pages/sinsei-teishutsu.tsx'
 import { Context } from './Context.tsx'
 import { useState } from 'react'
 import Syounin from './pages/syounin.tsx'
+import UserItiran from './pages/user-itiran.tsx'
 
 function App() {
   const [userID, setUserID] = useState(0)
@@ -42,6 +43,10 @@ function App() {
             承認フロー
           </Link>
           <div></div>
+          <Link to="/user-itiran">
+            ユーザー一覧
+          </Link>
+          <div></div>
           <Link to="/">
             Home
           </Link>
@@ -69,6 +74,8 @@ function App() {
         <Route path='/syounin-huro' element={<SyoninHuro></SyoninHuro>}>
         </Route>
         
+        <Route path='/user-itiran' element={<UserItiran/>} />
+      
       </Routes>
       
      </>
