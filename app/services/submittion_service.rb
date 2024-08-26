@@ -139,17 +139,18 @@ class SubmittionService
     approvers.each do |app|
       approver = app[:approver]
       # find approval for this approver
-      approval = Approval.find_by(approved_user_id: approver.user_id, shinsei_id: submittion.shinsei_id, step: submittion.step)
+      approval = Approval.find_by(approved_user_id: approver.user_id, submittion_id: submittion.id, step: submittion.step)
       # if returns vacant list, create approval object
       if approval.nil?
         new_approval = Approval.new(
           approved_user_id: approver.user_id,
+          submittion_id: submittion.id,
           shinsei_id: submittion.shinsei_id,
           step: submittion.step,
           status: 'pending'
         )
         new_approval.save
-        approval = Approval.find_by(approved_user_id: approver.user_id, shinsei_id: submittion.shinsei_id, step: submittion.step)
+        approval = Approval.find_by(approved_user_id: approver.user_id, submittion_id: submittion.id, step: submittion.step)
       end
       # check the approval status
       result &&= (approval.status == 'approve')
