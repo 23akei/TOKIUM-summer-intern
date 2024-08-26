@@ -50,7 +50,7 @@ module Api
       private
 
       def shinsei_params
-        params.require(:shinsei).permit(:title, :date, :user_id, :description, :kind, :shop, :flow_id, :approval_state)
+        params.require(:shinsei).permit(:title, :date, :user_id, :description, :kind, :shop, :flow_id, :approval_state, :amount)
       end
     end
   end
