@@ -52,7 +52,7 @@ class SubmittionService
           present_step += 1
         else
           # when condition is not satisfied, the flow is ended with success
-          submittion.status = 'success'
+          submittion.status = 'approve'
           break
         end
       elsif present_flow.key?(:approver)
@@ -67,7 +67,7 @@ class SubmittionService
           present_step += 1
         else
           # when any approver disapproves, the flow is ended with failure
-          submittion.status = 'failure'
+          submittion.status = 'reject'
           break
         end
       end
@@ -75,6 +75,9 @@ class SubmittionService
 
     # update the submittion
     submittion.step = present_step
+    if present_step > conditions_and_approvers.length
+      submittion.status = 'approve'
+    end
     submittion.save
     return {id: submittion.id}, :ok
   end
