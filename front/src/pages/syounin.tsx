@@ -1,14 +1,19 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import {api} from "../const"
 import { Approval } from "../../openapi/api";
+import { Context } from '../Context.tsx'
 
 export default function Syounin() {
 
-  const [userId, setUserId] = useState(-1);
+  const {userID, setUserID} = useContext(Context);
   const [approvals, setApprovals] = useState<Approval[]>([]);
   
-  const getApprovalsByUserId = async () => {
-    // const res = await api.approvals.getApprovalsByUserId(userId)
+  useEffect(()=>{
+    getApprovalsByUserID();
+  }, [userID])
+  
+  const getApprovalsByUserID = async () => {
+    // const res = await api.approvals.getApprovalsByUserId(userID)
     // console.log(res)
     setApprovals([
       {
@@ -33,11 +38,6 @@ export default function Syounin() {
   
   return (
     <>
-      <p style={{display:"inline"}}>user id: </p>
-      <input value={userId == -1? "" : userId} type="number" onChange={(event)=>{setUserId(event.target.valueAsNumber)}} />
-      <div/>
-      <button onClick={getApprovalsByUserId}>承認要件を取得</button>
-
       {approvals.length > 0 ?
         approvals.map(appr => 
           <div style={{display:"flex", border: "1px solid #000"}}>

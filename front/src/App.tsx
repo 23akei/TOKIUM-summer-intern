@@ -33,6 +33,7 @@ function App() {
           <Link to="/sinsei-teishutsu">
             申請提出
           </Link>
+          <div></div>
           <Link to="/syounin">
             承認
           </Link>
