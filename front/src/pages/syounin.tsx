@@ -5,7 +5,7 @@ import { Context } from '../Context.tsx'
 
 export default function Syounin() {
 
-  const {userID, setUserID} = useContext(Context);
+  const {userID} = useContext(Context);
   const [approvals, setApprovals] = useState<Approval[]>([]);
   
   useEffect(()=>{
@@ -13,27 +13,20 @@ export default function Syounin() {
   }, [userID])
   
   const getApprovalsByUserID = async () => {
-    // const res = await api.approvals.getApprovalsByUserId(userID)
-    // console.log(res)
-    setApprovals([
-      {
-        "application_id": 0,
-        "user_id": 0,
-        "status": "approved"
-      },
-      {
-        "application_id": 1,
-        "user_id": 0,
-        "status": "pending"
-      }
-    ])
+    const res = await api.approvals.getApprovalsByUserId(userID)
+    console.log(res)
+    setApprovals(res.data)
   }
   
-  const approve = async () => {
-    // const res = await api.application.
-  }
-  const reject = () => {
-    
+  const setStatus = async (appr: Approval, status: string) => {
+    appr.status = status
+    const res = await api.approvals.updateApproval(appr)
+    if (res.data.id != undefined) {
+      alert("updated approval " + res.data.id)
+      getApprovalsByUserID();
+    } else (
+      alert(res.error.message)
+    )
   }
   
   return (
@@ -41,12 +34,12 @@ export default function Syounin() {
       {approvals.length > 0 ?
         approvals.map(appr => 
           <div style={{display:"flex", border: "1px solid #000"}}>
-          <p style={{padding: "0 100px"}}>user id:{appr.user_id}</p>
-          <p style={{padding: "0 100px"}}>application id:{appr.application_id}</p>
+          <p style={{padding: "0 100px"}}>user id:{appr.approved_user_id}</p>
+          <p style={{padding: "0 100px"}}>application id:{appr.shinsei_id}</p>
           <p style={{width: "200px"}}>status:{appr.status}</p>
           <div style={{display:"flex", alignItems: "center"}}>
-          <button onClick>承認</button>
-          <button onClick>却下</button>
+          <button onClick={() => setStatus(appr, "approved")}>承認</button>
+          <button onClick={() => setStatus(appr, "rejected")}>却下</button>
           </div>
         </div>)
         : <p>承認するものなし</p>}
