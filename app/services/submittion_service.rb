@@ -18,6 +18,8 @@ class SubmittionService
       return { error: e.message }, :internal_server_error
     end
 
+    puts "approver: #{approvers.inspect}"
+
     s_conditions = conditions.map do |condition|
       {step: condition.step, condition: condition}
     end
@@ -78,38 +80,66 @@ class SubmittionService
   end
 
   def process_condition(condition, shinsei)
+    # get column type of the condition key
+    column_type = Shinsei.columns_hash[condition.key].type
+    # convert the value to the column type
+    val = case column_type
+    when :integer
+      condition.value.to_i
+    when :string
+      condition.value
+    when :datetime
+      Time.parse(condition.value)
+    end
+
+    shin_val = shinsei[condition.key]
+    shin_val = case column_type
+    when :integer
+      shin_val.to_i
+    when :string
+      shin_val
+    when :datetime
+      Time.parse(shin_val)
+    end
+
+    # compare the value with the condition
     case condition.condition
     when Comparision::OPERATORS[:neq]
-      return shinsei[condition.key] != condition.value
+      return shin_val != val
     when Comparision::OPERATORS[:eq]
-      return shinsei[condition.key] == condition.value
+      return shin_val == val
     when Comparision::OPERATORS[:ge]
-      return shinsei[condition.key] >= condition.value
+      return shin_val >= val
     when Comparision::OPERATORS[:le]
-      return shinsei[condition.key] <= condition.value
+      return shin_val <= val
     when Comparision::OPERATORS[:gt]
-      return shinsei[condition.key] > condition.value
+      return shin_val > val
     when Comparision::OPERATORS[:lt]
-      return shinsei[condition.key] < condition.value
+      return shin_val < val
     end
     raise 'Invalid condition'
   end
 
-  def process_approver(approvers, shinsei)
+  def process_approver(approvers, submittion)
     result = true
     pendings = false
+
+    # convert single approver to a list
+    approvers = [approvers] if approvers.is_a?(Approver)
+
     approvers.each do |approver|
       # find approval for this approver
-      approvals = Approval.find_by(user_id: approver.user_id, shinsei_id: shinsei.id, step: submittion.step)
+      approval = Approval.find_by(approved_user_id: approver.user_id, shinsei_id: submittion.shinsei_id, step: submittion.step)
       # if returns vacant list, create approval object
-      if approvals.empty?
-        approval = Approval.new(
-          user_id: approver.user_id,
-          shinsei_id: shinsei.id,
+      if approval.nil?
+        new_approval = Approval.new(
+          approved_user_id: approver.user_id,
+          shinsei_id: submittion.shinsei_id,
           step: submittion.step,
           status: 'pending'
         )
-        approval.save
+        new_approval.save
+        approval = Approval.find_by(approved_user_id: approver.user_id, shinsei_id: submittion.shinsei_id, step: submittion.step)
       end
       # check the approval status
       result &&= (approval.status == 'approve')
