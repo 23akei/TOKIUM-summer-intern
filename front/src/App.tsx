@@ -5,6 +5,7 @@ import SinkiUserSakusei from './pages/sinki-user-sakusei.tsx'
 import SinkiSinsei from './pages/sinki-sinsei.tsx'
 import SyoninHuro from './pages/syounin-huro.tsx'
 import SinseiTeishutsu from './pages/sinsei-teishutsu.tsx'
+import ShinseiJoutai from './pages/shinsei-joutai.tsx'
 import { Context } from './Context.tsx'
 import { useState } from 'react'
 
@@ -13,7 +14,7 @@ function App() {
 
   return (
 
-    
+
     <Context.Provider value={{ userID, setUserID }}>
       <span>user id:</span>
       <input type="number" value={userID} onChange={(event) => setUserID(event.target.valueAsNumber)} />
@@ -33,6 +34,10 @@ function App() {
             申請提出
           </Link>
           <div></div>
+          <Link to="/shinsei-joutai">
+            提出した申請
+          </Link>
+          <div></div>
           <Link to="/syounin-huro">
             承認フロー
           </Link>
@@ -45,9 +50,9 @@ function App() {
       <Routes>
         <Route path="/" element={<>
             <Header/>
-            <p>hello tokium</p> 
+            <p>hello tokium</p>
           </>}>
-          
+
         </Route>
         <Route path="/sinki-user-sakusei" element={<SinkiUserSakusei></SinkiUserSakusei>}>
         </Route>
@@ -58,14 +63,17 @@ function App() {
         <Route path='/sinsei-teishutsu' element={<SinseiTeishutsu/>}>
         </Route>
 
+        <Route path='/shinsei-joutai' element={<ShinseiJoutai></ShinseiJoutai>}>
+        </Route>
+
         <Route path='/syounin-huro' element={<SyoninHuro></SyoninHuro>}>
         </Route>
-        
+
       </Routes>
-      
+
      </>
 
-    </BrowserRouter> 
+    </BrowserRouter>
     </Context.Provider>
   )
 }

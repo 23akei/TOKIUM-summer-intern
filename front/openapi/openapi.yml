@@ -342,7 +342,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Application'
+                  $ref: '#/components/schemas/Submittion'
         '500':
           description: Internal server error
           content:
@@ -729,6 +729,8 @@ components:
       description: 申請提出
       type: object
       properties:
+        id:
+          type: integer
         shinsei_id:
           type: integer
         user_id:
