@@ -663,9 +663,28 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: '#/components/schemas/Condition'
+              - $ref: '#/components/schemas/CreateCondition'
               - $ref: '#/components/schemas/CreateApprovers'
     Condition:
+      description: 承認フローの条件
+      type: object
+      properties:
+        step:
+          type: integer
+        condition:
+          type: object
+          properties:
+            id:
+              type: integer
+            key:
+              type: string
+            value:
+              type: string
+            condition:
+              type: string
+            step:
+              type: integer
+    CreateCondition:
       description: 承認フローの条件
       type: object
       properties:
@@ -694,6 +713,8 @@ components:
       description: 承認フローごとの承認者のリスト
       type: object
       properties:
+        step:
+          type: integer
         approvers:
           type: array
           items:

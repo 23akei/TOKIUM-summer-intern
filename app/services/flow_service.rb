@@ -10,6 +10,7 @@ class FlowService
 
     step = 1
     flow_contents.each do |flow_params|
+      puts "Flow params" + flow_params.inspect
       if flow_params["approvers"]
         approvers = flow_params["approvers"]
         approvers.each do |approver_params|
@@ -66,8 +67,27 @@ class FlowService
     flow_obj = {}
     flow_obj[:id] = flow.id
     flow_obj[:name] = flow.name
-    flow_obj[:approvers] = Approver.where(flow_id: flow.id)
-    flow_obj[:conditions] = Condition.where(flow_id: flow.id)
+    flow_obj[:flow] = []
+
+    flow_obj[:flow] = Condition.where(flow_id: flow.id).map do |condition|
+      {condition: condition, step: condition.step}
+    end
+
+    approvers = Approver.where(flow_id: flow.id)
+    approvers_tmp = {}
+    approvers.each do |approver|
+      step = approver.step
+      user = User.find_by(id: approver.user_id)
+      if approvers_tmp[step].nil?
+        approvers_tmp[step] = [user]
+      else
+        approvers_tmp[step] << user
+      end
+    end
+    approvers_tmp.each do |step, users|
+      flow_obj[:flow].append({step: step, approvers: users})
+    end
+
     return flow_obj
   end
 end
