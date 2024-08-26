@@ -342,7 +342,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Application'
+                  $ref: '#/components/schemas/Submittion'
         '500':
           description: Internal server error
           content:
