@@ -28,7 +28,7 @@ module Api
       # GET /api/v1/submissions/user/:user_id
       def user
         begin
-          submittions = Submittion.find_by(user_id: params[:user_id], status: 'pending')
+          submittions = Submittion.where(user_id: params[:user_id], status: 'pending')
           if submittions.nil?
             render json: [], status: :ok
           else
