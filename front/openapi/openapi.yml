@@ -291,7 +291,7 @@ paths:
             schema:
               type: object
               properties:
-                application_id:
+                shinsei_id:
                   type: integer
                 user_id:
                   type: integer
@@ -504,11 +504,11 @@ paths:
                   message:
                     type: string
   /approvals:
-    post:
-      summary: Create a new approval
+    put:
+      summary: Update an approval
       tags:
         - Approvals
-      operationId: createApproval
+      operationId: updateApproval
       requestBody:
         required: true
         content:
@@ -517,8 +517,8 @@ paths:
               type: object
               $ref: '#/components/schemas/Approval'
       responses:
-        '201':
-          description: Approval created successfully
+        '200':
+          description: Approval updated successfully
           content:
             application/json:
               schema:
@@ -599,6 +599,8 @@ components:
       description: 経費申請
       type: object
       properties:
+        id:
+          type: integer
         title:
           type: string
         date:
@@ -700,6 +702,9 @@ components:
       description: 承認
       type: object
       properties:
+        id:
+          description: id
+          type: integer
         shinsei_id:
           description: 申請ID
           type: integer

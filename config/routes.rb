@@ -13,9 +13,9 @@ Rails.application.routes.draw do
       get 'application/:id', to: 'shinseis#show'
       get 'application/user/:user_id', to: 'shinseis#user'
 
-      # /submissions
-      post 'submissions', to: 'submissions#create'
-      get 'submissions/user/:user_id', to: 'submissions#user'
+      # /submittions
+      post 'submittions', to: 'submittions#create'
+      get 'submittions/user/:user_id', to: 'submittions#user'
 
       # /flows
       post 'flows', to: 'flows#create'
@@ -25,7 +25,7 @@ Rails.application.routes.draw do
       get 'flows/:id', to: 'flows#show'
 
       # /approvals
-      post 'approvals', to: 'approvals#create'
+      put 'approvals', to: 'approvals#update'
       get 'approvals/user/:id', to: 'approvals#get_applications_by_user_needs_to_approve'
     end
   end

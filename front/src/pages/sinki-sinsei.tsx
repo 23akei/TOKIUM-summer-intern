@@ -1,5 +1,6 @@
 import {api} from "../const"
-import { useState } from "react"
+import { useState, useContext } from "react"
+import { Context } from "../Context";
 
 
 
@@ -16,10 +17,11 @@ import { useState } from "react"
 
 export default function SinkiSinsei() {
 
+  const {userID, setUserID} = useContext(Context)
+  
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
-  const [user_id, setUser_id] = useState(0);
   const [kind, setKind] = useState("");
   const [shop, setShop] = useState("");
   const [amount, setAmount] = useState(0);
@@ -28,7 +30,7 @@ export default function SinkiSinsei() {
 
 
   const registerSinsei = async () => {
-    const res = await api.application.createApplication({title, date, description, user_id, kind, shop, amount, flow_id})
+    const res = await api.application.createApplication({title, date, description, user_id:userID, kind, shop, amount, flow_id})
     console.log(res.data)
     // if (!res.data.date || !res.data.description) {
     //   alert((res.error.message))
@@ -41,7 +43,7 @@ const [isModalOpen, setIsModalOpen] = useState(false);
 
 const handleUserIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   const value = event.target.value;
-  setUser_id(value === "" ? 0 : parseInt(value));
+  setUserID(value === "" ? 0 : parseInt(value));
 };
 
 const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,8 +79,8 @@ const closeModal = () => {
           <p>詳細：<br />
           <input value={description} onChange={(event)=>{setDescription(event.target.value)}}/></p>
           <p>ユーザーID：<br />
-          <input value={user_id} onChange={handleUserIdChange}/></p>
-          <p>科目：<br />
+          <input value={userID} onChange={handleUserIdChange}/></p>
+          <p>種類：<br />
           <input value={kind} onChange={(event)=>{setKind(event.target.value)}}/></p>
           <p>店舗：<br />
           <input value={shop} onChange={(event)=>{setShop(event.target.value)}}/></p>

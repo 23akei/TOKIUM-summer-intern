@@ -4,9 +4,19 @@ import Header from './components/header.tsx'
 import SinkiUserSakusei from './pages/sinki-user-sakusei.tsx'
 import SinkiSinsei from './pages/sinki-sinsei.tsx'
 import SyoninHuro from './pages/syounin-huro.tsx'
+import SinseiTeishutsu from './pages/sinsei-teishutsu.tsx'
+import { Context } from './Context.tsx'
+import { useState } from 'react'
 
 function App() {
+  const [userID, setUserID] = useState(0)
+
   return (
+
+    
+    <Context.Provider value={{ userID, setUserID }}>
+      <span>user id:</span>
+      <input type="number" value={userID} onChange={(event) => setUserID(event.target.valueAsNumber)} />
 
     <BrowserRouter>
       <>
@@ -17,6 +27,10 @@ function App() {
           <div></div>
           <Link to="/sinki-sinsei">
             新規申請
+          </Link>
+          <div></div>
+          <Link to="/sinsei-teishutsu">
+            申請提出
           </Link>
           <div></div>
           <Link to="/syounin-huro">
@@ -41,6 +55,9 @@ function App() {
         <Route path='/sinki-sinsei' element={<SinkiSinsei></SinkiSinsei>}>
         </Route>
 
+        <Route path='/sinsei-teishutsu' element={<SinseiTeishutsu/>}>
+        </Route>
+
         <Route path='/syounin-huro' element={<SyoninHuro></SyoninHuro>}>
         </Route>
         
@@ -49,6 +66,7 @@ function App() {
      </>
 
     </BrowserRouter> 
+    </Context.Provider>
   )
 }
 
