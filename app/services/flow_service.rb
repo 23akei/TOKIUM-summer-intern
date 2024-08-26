@@ -52,18 +52,20 @@ class FlowService
     all_flows = Flow.all
     flows = []
     all_flows.each do |f|
-      flow = {}
-      flow[:id] = f.id
-      flow[:name] = f.name
-      flow[:approvers] = Approver.where(flow_id: f.id)
-      flow[:conditions] = Condition.where(flow_id: f.id)
-      flows.append(flow)
+      flows.append(compose_flow_obj(f))
     end
     return flows
   end
 
   def get_flow_by_id(id)
     flow = Flow.find_by(id: id)
+    if flow.nil?
+      return nil
+    end
+    return compose_flow_obj(flow)
+  end
+
+  def compose_flow_obj(flow)
     flow_obj = {}
     flow_obj[:id] = flow.id
     flow_obj[:name] = flow.name
@@ -87,7 +89,6 @@ class FlowService
     approvers_tmp.each do |step, users|
       flow_obj[:flow].append({step: step, approvers: users})
     end
-
     return flow_obj
   end
 end
