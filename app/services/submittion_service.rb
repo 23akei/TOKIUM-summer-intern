@@ -10,22 +10,26 @@ class SubmittionService
       if flow.nil?
         return { error: 'Flow not found' }, :not_found
       end
-      conditions = Condition.where(flow_id: flow.id)
-      approvers = Approver.where(flow_id: flow.id)
     rescue ActiveRecord::RecordNotFound
       return { error: 'Flow not found' }, :not_found
     rescue => e
       return { error: e.message }, :internal_server_error
     end
+    conditions = Condition.where(flow_id: flow.id)
+    approvers = Approver.where(flow_id: flow.id)
 
-    puts "approver: #{approvers.inspect}"
+    Rails.logger.info  "approver: #{approvers.inspect}"
 
     s_conditions = conditions.map do |condition|
       {step: condition.step, condition: condition}
     end
-    s_approvers = approvers.map do |approver|
+    _s_approvers = approvers.map do |approver|
       {step: approver.step, approver: approver}
     end
+    s_approvers = _s_approvers.group_by { |approver| approver[:step] }.map do |step, approvers|
+      { step: step, approver: approvers }
+    end
+    Rails.logger.info "s_approvers: #{s_approvers.inspect}"
     # sort conditions and approvers by step
     conditions_and_approvers = s_conditions + s_approvers
     conditions_and_approvers.sort_by! { |ca| ca[:step] }
@@ -52,7 +56,7 @@ class SubmittionService
           present_step += 1
         else
           # when condition is not satisfied, the flow is ended with success
-          submittion.status = 'success'
+          submittion.status = 'approve'
           break
         end
       elsif present_flow.key?(:approver)
@@ -67,7 +71,7 @@ class SubmittionService
           present_step += 1
         else
           # when any approver disapproves, the flow is ended with failure
-          submittion.status = 'failure'
+          submittion.status = 'reject'
           break
         end
       end
@@ -75,6 +79,9 @@ class SubmittionService
 
     # update the submittion
     submittion.step = present_step
+    if present_step > conditions_and_approvers.length
+      submittion.status = 'approve'
+    end
     submittion.save
     return {id: submittion.id}, :ok
   end
@@ -127,19 +134,23 @@ class SubmittionService
     # convert single approver to a list
     approvers = [approvers] if approvers.is_a?(Approver)
 
-    approvers.each do |approver|
+    Rails.logger.info "approvers: #{approvers.inspect}"
+
+    approvers.each do |app|
+      approver = app[:approver]
       # find approval for this approver
-      approval = Approval.find_by(approved_user_id: approver.user_id, shinsei_id: submittion.shinsei_id, step: submittion.step)
+      approval = Approval.find_by(approved_user_id: approver.user_id, submittion_id: submittion.id, step: submittion.step)
       # if returns vacant list, create approval object
       if approval.nil?
         new_approval = Approval.new(
           approved_user_id: approver.user_id,
+          submittion_id: submittion.id,
           shinsei_id: submittion.shinsei_id,
           step: submittion.step,
           status: 'pending'
         )
         new_approval.save
-        approval = Approval.find_by(approved_user_id: approver.user_id, shinsei_id: submittion.shinsei_id, step: submittion.step)
+        approval = Approval.find_by(approved_user_id: approver.user_id, submittion_id: submittion.id, step: submittion.step)
       end
       # check the approval status
       result &&= (approval.status == 'approve')

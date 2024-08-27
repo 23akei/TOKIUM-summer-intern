@@ -726,6 +726,9 @@ components:
         id:
           description: id
           type: integer
+        submittion_id:
+          description: 提出ID
+          type: integer
         shinsei_id:
           description: 申請ID
           type: integer
