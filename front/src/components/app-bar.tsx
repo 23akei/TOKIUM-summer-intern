@@ -25,60 +25,64 @@ export default function CustomAppBar() {
   return (
     <AppBar position="static" style={{ marginBottom: "50px" }}>
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Kimochi++
-          </Typography>
+      <Toolbar disableGutters>
+      <Typography
+    variant="h6"
+    noWrap
+    component="div"
+    sx={{
+      mr: 2,
+      display: { xs: 'none', md: 'flex' },
+      fontFamily: 'monospace',
+      fontWeight: 700,
+      letterSpacing: '.3rem',
+      color: 'inherit',
+      textDecoration: 'none',
+    }}
+      >
+      Kimochi++
+    </Typography>
 
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <Button sx={{ m: 1, color: 'white', display: 'block' }}>
-              <Link to="/" style={link}>Home</Link>
-            </Button>
+      <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+      <Button sx={{ m: 1, color: 'white', display: 'block' }}>
+      <Link to="/" style={link}>Home</Link>
+      </Button>
 
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/sinki-user-sakusei" style={link}>新規ユーザー作成</Link>
-            </Button>
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/sinki-sinsei" style={link}>新規申請</Link>
-            </Button>
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/sinsei-teishutsu" style={link}>申請提出</Link>
-            </Button>
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/syounin" style={link}>承認</Link>
-            </Button>
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/syounin-huro" style={link}>承認フロー</Link>
-            </Button>
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/user-itiran" style={link}>ユーザー一覧</Link>
-            </Button>
-          </Box>
+      <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
+      <Link to="/sinki-user-sakusei" style={link}>新規ユーザー作成</Link>
+      </Button>
+      <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
+      <Link to="/sinki-sinsei" style={link}>新規申請</Link>
+      </Button>
+      <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
+      <Link to="/sinsei-teishutsu" style={link}>申請提出</Link>
+      </Button>
+      <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
+      <Link to="/syounin" style={link}>承認</Link>
+      </Button>
+      <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
+      <Link to="/syounin-huro" style={link}>承認フロー</Link>
+      </Button>
+      <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
+      <Link to="/syounin-huro-itiran" style={link}>承認フロー一覧</Link>
+      </Button>
 
-          <Box sx={{ flexGrow: 0 }}>
+      <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
+      <Link to="/user-itiran" style={link}>ユーザー一覧</Link>
+      </Button>
+      </Box>
+
+      <Box sx={{ flexGrow: 0 }}>
 
 
-            <span>user id:</span>
-            <input type="number" value={userID} onChange={(event) => setUserID(event.target.valueAsNumber)} />
+      <span>user id:</span>
+      <input type="number" value={userID} onChange={(event) => setUserID(event.target.valueAsNumber)} />
 
 
-          </Box>
-        </Toolbar>
+      </Box>
+      </Toolbar>
       </Container>
-    </AppBar>
+      </AppBar>
   );
 }
