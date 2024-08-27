@@ -7,8 +7,9 @@ module Api
           approval = Approval.find_by(id: approval_params[:id])
           if approval.update(approval_params)
             # proceed the flow
+            submittion = Submittion.find_by(id: approval.submittion_id)
             submittion_service = SubmittionService.new
-            ret, status = submittion_service.proceed_flow(approval)
+            ret, status = submittion_service.proceed_flow(submittion)
             if status != :ok
               render json: { error: ret }, status: status
             end
@@ -38,7 +39,7 @@ module Api
       private
 
       def approval_params
-        params.require(:approval).permit(:id, :shinsei_id, :step, :approved_user_id, :status, :updated_at, :created_at)
+        params.require(:approval).permit(:id, :shinsei_id, :submittion_id, :step, :approved_user_id, :status, :updated_at, :created_at)
       end
     end
   end

@@ -13,11 +13,11 @@ export default function Syounin() {
 
   const {userID} = useContext(Context);
   const [approvals, setApprovals] = useState<ApprovalAndApplication[]>([]);
-  
+
   useEffect(()=>{
     getApprovalsByUserID();
   }, [userID])
-  
+
   const getApprovalsByUserID = async () => {
     let apprs: ApprovalAndApplication[];
     {
@@ -40,9 +40,9 @@ export default function Syounin() {
       Promise.all(asyncs).then(()=>{
         setApprovals(apprs)
       })
-    } 
+    }
   }
-  
+
   const setStatus = async (appr: Approval, status: string) => {
     appr.status = status
     const res = await api.approvals.updateApproval(appr)
@@ -53,7 +53,7 @@ export default function Syounin() {
       alert(res.error.message)
     }
   }
-  
+
   return (
     <>
       <div style={{display: "flex", justifyContent: "center"}}>
@@ -88,8 +88,8 @@ export default function Syounin() {
             <td>{appr.application?.date}</td>
             <td>
             <div style={{ display: "flex", alignItems: "center" }}>
-            <button onClick={() => setStatus(appr.approval, "approved")}>承認</button>
-            <button onClick={() => setStatus(appr.approval, "rejected")}>却下</button>
+            <button onClick={() => setStatus(appr.approval, "approve")}>承認</button>
+            <button onClick={() => setStatus(appr.approval, "reject")}>却下</button>
             </div>
             </td>
             </tr>
