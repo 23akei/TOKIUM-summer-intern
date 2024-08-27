@@ -30,7 +30,7 @@ export default function CustomAppBar() {
 
     return (
     
-    <AppBar position="static">
+      <AppBar position="static" style={{marginBottom: "50px"}}>
         <Container  maxWidth="xl">
         <Toolbar disableGutters>
             <Typography

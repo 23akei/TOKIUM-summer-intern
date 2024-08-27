@@ -9,6 +9,7 @@ import { Context } from './Context.tsx'
 import { useState } from 'react'
 import Syounin from './pages/syounin.tsx'
 import UserItiran from './pages/user-itiran.tsx'
+import SyouninHuroItiran from './pages/syounin-huro-itiran.tsx'
 import AppBar from './components/app-bar.tsx'
 
 
