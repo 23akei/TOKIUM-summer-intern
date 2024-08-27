@@ -1,21 +1,27 @@
-import React, { useEffect } from 'react';
-import { AdvancedMarker as Marker, Map, APIProvider } from '@vis.gl/react-google-maps';
+import React, { useEffect, useState } from 'react';
+import { Map, APIProvider, MapMouseEvent } from '@vis.gl/react-google-maps';
 
 const containerStyle: React.CSSProperties = {
+  padding: '20px',
   width: '100%',
-  height: '400px'
+  height: '500px',
 };
 
-const center = { lat: -34.397, lng: 150.644 };
-
 const GMap: React.FC = () => {
+  const [center, setCenter] = useState({ lat: -34.397, lng: 150.644 });
+
+  const handleMapClick = (event: MapMouseEvent) => {
+    console.log("clicked place id:"+event.detail.placeId);
+  }
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
-      center.lat = position.coords.latitude;
-      center.lng = position.coords.longitude;
+      setCenter({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      });
     });
-  });
+  }, []);
 
   return (
     <APIProvider
@@ -31,6 +37,7 @@ const GMap: React.FC = () => {
         zoomControl={true}
         disableDefaultUI={true}
         mapTypeControl={true}
+        onClick={handleMapClick}
       >
       </Map>
     </APIProvider>
