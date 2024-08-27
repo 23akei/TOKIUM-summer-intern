@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AdvancedMarker as Marker, Map, APIProvider } from '@vis.gl/react-google-maps';
 
 const containerStyle: React.CSSProperties = {
@@ -9,6 +9,14 @@ const containerStyle: React.CSSProperties = {
 const center = { lat: -34.397, lng: 150.644 };
 
 const GMap: React.FC = () => {
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      center.lat = position.coords.latitude;
+      center.lng = position.coords.longitude;
+    });
+  });
+
   return (
     <APIProvider
       apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
@@ -18,14 +26,12 @@ const GMap: React.FC = () => {
       <Map
         mapId={import.meta.env.VITE_GOOGLE_MAPS_API_MAP_ID}
         style={containerStyle}
-        center={center}
-        zoom={10}
-        defaultCenter={{lat: 22.54992, lng: 0}}
-        defaultZoom={3}
-        gestureHandling={'greedy'}
+        defaultCenter={center}
+        defaultZoom={15}
+        zoomControl={true}
         disableDefaultUI={true}
+        mapTypeControl={true}
       >
-        <Marker position={center} />
       </Map>
     </APIProvider>
   );
