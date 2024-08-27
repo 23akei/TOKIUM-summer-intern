@@ -4,11 +4,12 @@ import { Map, APIProvider, MapMouseEvent } from '@vis.gl/react-google-maps';
 const containerStyle: React.CSSProperties = {
   padding: '20px',
   width: '100%',
-  height: '500px',
+  height: '600px',
+  minWidth: '500px',
 };
 
 const GMap: React.FC = () => {
-  const [center, setCenter] = useState({ lat: -34.397, lng: 150.644 });
+  const [center, setCenter] = useState({ lat: 35.6809591, lng: 139.7673068 });
 
   const handleMapClick = (event: MapMouseEvent) => {
     console.log("clicked place id:"+event.detail.placeId);

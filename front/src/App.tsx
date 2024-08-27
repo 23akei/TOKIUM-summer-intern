@@ -12,9 +12,6 @@ import UserItiran from './pages/user-itiran.tsx'
 import SyouninHuroItiran from './pages/syounin-huro-itiran.tsx'
 import AppBar from './components/app-bar.tsx'
 
-import GMap from './components/map.tsx'
-import PlacesList from './components/places.tsx'
-
 
 function App() {
   const [userID, setUserID] = useState(0)
@@ -30,9 +27,6 @@ function App() {
     <BrowserRouter>
       <>
         <AppBar></AppBar>
-
-
-        <GMap />
 
       <Routes>
         <Route path="/" element={<>

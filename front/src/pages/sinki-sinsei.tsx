@@ -1,7 +1,9 @@
 import {api} from "../const"
 import { useState, useContext } from "react"
 import { Context } from "../Context";
+import GMap from '../components/map.tsx'
 
+import { Dialog, DialogContent } from "@mui/material";
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -13,7 +15,6 @@ import Grid from '@mui/material/Grid';
 
 import TextField from '@mui/material/TextField';
 
-import { Application } from "../../openapi/api";
 
 export default function SinkiSinsei() {
 
@@ -27,7 +28,7 @@ export default function SinkiSinsei() {
   );
 
   const {userID, setUserID} = useContext(Context)
-  
+
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
@@ -37,8 +38,6 @@ export default function SinkiSinsei() {
   const [flow_id, setFlow_id] = useState(0);
 
   const [selectUserID, setSlectUserID] = useState(userID);
-
-
 
 
   const registerSinsei = async () => {
@@ -190,7 +189,6 @@ const closeModal = () => {
       </Box>
       </Card>
     </Container>
-    
 
         </CardContent>
         <CardActions sx={{ display: 'flex', justifyContent: 'center' }} >  {/* ここでボタンを右端に配置 */}
@@ -198,25 +196,21 @@ const closeModal = () => {
         </CardActions>
       </Card>
 
-          {isModalOpen && (
-            <div style={{
-            position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-            backgroundColor: "white", padding: "20px", border: "1px solid #ccc", zIndex: 1000
-            }}>
+            {/* 地図表示モーダル */}
+            <Dialog
+              open={isModalOpen}
+              onClose={closeModal}
+              fullWidth
+              maxWidth="lg"
+            >
+              <DialogContent>
               <h2>店舗マップ</h2>
-              <p>店舗名: <input value={shop} onChange={(event) => setShop(event.target.value)} /></p>
-              <button onClick={closeModal}>閉じる</button>
-            </div>
-          )}
+              <GMap />
+              <div>店舗名: <TextField value={shop} onChange={(event) => setShop(event.target.value)} /></div>
+              <Button onClick={closeModal}>閉じる</Button>
+              </DialogContent>
+            </Dialog>
 
-          {/* モーダルの背面部分 */}
-          {isModalOpen && (
-            <div style={{
-              position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
-              backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 999
-            }} onClick={closeModal}></div>
-          )}
-              
       </>
   )
 }
