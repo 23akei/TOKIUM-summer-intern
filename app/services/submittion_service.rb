@@ -18,8 +18,6 @@ class SubmittionService
     conditions = Condition.where(flow_id: flow.id)
     approvers = Approver.where(flow_id: flow.id)
 
-    Rails.logger.info  "approver: #{approvers.inspect}"
-
     s_conditions = conditions.map do |condition|
       {step: condition.step, condition: condition}
     end
@@ -29,7 +27,7 @@ class SubmittionService
     s_approvers = _s_approvers.group_by { |approver| approver[:step] }.map do |step, approvers|
       { step: step, approver: approvers }
     end
-    Rails.logger.info "s_approvers: #{s_approvers.inspect}"
+
     # sort conditions and approvers by step
     conditions_and_approvers = s_conditions + s_approvers
     conditions_and_approvers.sort_by! { |ca| ca[:step] }
@@ -54,6 +52,7 @@ class SubmittionService
         if condition_result
           # when condition is satisfied, the flow is continued to the next step
           present_step += 1
+          next
         else
           # when condition is not satisfied, the flow is ended with success
           submittion.status = 'approve'
@@ -61,7 +60,7 @@ class SubmittionService
         end
       elsif present_flow.key?(:approver)
         # when approver
-        approver_result, pendings = process_approver(present_flow[:approver], submittion)
+        approver_result, pendings = process_approver(present_flow[:approver], submittion, present_step)
         if pendings
           # when any approver is pending, the flow is ended with pending
           submittion.status = 'pending'
@@ -69,6 +68,7 @@ class SubmittionService
         elsif approver_result
           # when all approvers approve, the flow is continued to the next step
           present_step += 1
+          next
         else
           # when any approver disapproves, the flow is ended with failure
           submittion.status = 'reject'
@@ -127,32 +127,32 @@ class SubmittionService
     raise 'Invalid condition'
   end
 
-  def process_approver(approvers, submittion)
+  def process_approver(approvers, submittion, present_step)
     result = true
     pendings = false
 
     # convert single approver to a list
     approvers = [approvers] if approvers.is_a?(Approver)
 
-    Rails.logger.info "approvers: #{approvers.inspect}"
+    approver_ids = approvers.map { |app| app[:approver].user_id }
+    existing_approvals = Approval.where(approved_user_id: approver_ids, submittion_id: submittion.id, step: present_step).index_by(&:approved_user_id)
 
     approvers.each do |app|
       approver = app[:approver]
-      # find approval for this approver
-      approval = Approval.find_by(approved_user_id: approver.user_id, submittion_id: submittion.id, step: submittion.step)
-      # if returns vacant list, create approval object
+      approval = existing_approvals[approver.user_id]
+
       if approval.nil?
         new_approval = Approval.new(
           approved_user_id: approver.user_id,
           submittion_id: submittion.id,
           shinsei_id: submittion.shinsei_id,
-          step: submittion.step,
+          step: present_step,
           status: 'pending'
         )
         new_approval.save
-        approval = Approval.find_by(approved_user_id: approver.user_id, submittion_id: submittion.id, step: submittion.step)
+        approval = new_approval
       end
-      # check the approval status
+
       result &&= (approval.status == 'approve')
       pendings ||= (approval.status == 'pending')
     end
