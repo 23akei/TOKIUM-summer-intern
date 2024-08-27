@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react"
-import { ApprovalAndApplication } from "../../code/TOKIUM-summer-intern/front/src/pages/syounin"
+import { ApprovalAndApplication } from "../pages/syounin.tsx"
 
 
 function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Dispatch<React.SetStateAction<Jouken>>}) {
@@ -74,7 +74,7 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
     <>
       <div style={{textAlign:"left", padding:"0 20%" }}>
         <div>
-          <span>user id: </span>
+          <span>from user id: </span>
           <input type="number" value={jouken.userID!=null?jouken.userID:""} onChange={changeUserID} />
         </div>
 
