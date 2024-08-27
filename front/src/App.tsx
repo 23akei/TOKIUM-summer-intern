@@ -11,6 +11,7 @@ import Syounin from './pages/syounin.tsx'
 import UserItiran from './pages/user-itiran.tsx'
 import AppBar from './components/app-bar.tsx'
 
+
 function App() {
   const [userID, setUserID] = useState(0)
 
@@ -49,6 +50,12 @@ function App() {
             ユーザー一覧
           </Link>
           <div></div>
+          <Link to="/syounin-huro-itiran">
+              承認フロー一覧
+          </Link>
+          <div></div>
+
+          <div/>
           <Link to="/">
             Home
           </Link>
@@ -74,6 +81,8 @@ function App() {
       
         </Route>
         <Route path='/syounin-huro' element={<SyoninHuro></SyoninHuro>}>
+        </Route>
+        <Route path='/syounin-huro-itiran' element={<SyouninHuroItiran></SyouninHuroItiran>}>
         </Route>
         
         <Route path='/user-itiran' element={<UserItiran/>} />
