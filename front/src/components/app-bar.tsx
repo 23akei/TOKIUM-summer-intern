@@ -1,13 +1,10 @@
-import * as React from 'react';
+import styled from '@emotion/styled';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Link } from 'react-router-dom';
 
@@ -18,7 +15,44 @@ import { api } from '../const.ts'
 import { User } from "../../openapi/api.ts"
 import { TextField } from '@mui/material';
 
-// const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const StyledButton = styled(Button)`
+  padding: 0px;
+  color: white;
+  margin: 2px;
+  display: block:
+  height: 90%;
+`;
+
+const StyledBox = styled(Box)`
+ flexGrow: 1;
+ display: flex;
+`;
+
+const StyledUserBox = styled(Box)`
+ flex-grow: 2;
+ display: right;
+ height: 90%;
+`;
+
+const StyledAutocomplete = styled(Autocomplete)`
+  .MuiAutocomplete-inputRoot: {
+    text-color: 'white';
+  },
+  .MuiAutocomplete-option: {
+    color: 'white';
+  }
+  height: 80%;
+`;
+
+const StyledLink = styled(Link)`
+  padding: 4px;
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+`;
 
 export default function CustomAppBar() {
   const { userID, setUserID } = useContext(Context);
@@ -35,12 +69,18 @@ export default function CustomAppBar() {
     getAllUsers();
   }, []);
 
-  const link: any = {
-    padding: "2px", color: 'inherit', textDecoration: 'none', display: "flex", height: "100%", alignItems: "center", justifyContent:"center"
-  }
+  const menuLink = [
+    { "link": "/", "label": "Home" },
+    { "link": "/sinki-user-sakusei", "label": "新規ユーザー作成" },
+    { "link": "/sinki-sinsei", "label": "新規申請" },
+    { "link": "/sinsei-teishutsu", "label": "申請提出" },
+    { "link": "/syounin", "label": "承認" },
+    { "link": "/syounin-huro", "label": "承認フロー" },
+    { "link": "/user-itiran", "label": "ユーザー一覧" },
+  ];
 
   return (
-    <AppBar position="static" style={{ marginBottom: "50px" }}>
+    <AppBar position="static" sx={{ marginBottom: "50px" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -60,42 +100,24 @@ export default function CustomAppBar() {
             Kimochi++
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <Button sx={{ m: 1, color: 'white', display: 'block' }}>
-              <Link to="/" style={link}>Home</Link>
-            </Button>
+          <StyledBox>
+            {menuLink.map((item) => (
+              <StyledButton key={item.link}>
+                <StyledLink to={item.link}>{item.label}</StyledLink>
+              </StyledButton>
+            ))}
+          </StyledBox>
 
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/sinki-user-sakusei" style={link}>新規ユーザー作成</Link>
-            </Button>
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/sinki-sinsei" style={link}>新規申請</Link>
-            </Button>
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/sinsei-teishutsu" style={link}>申請提出</Link>
-            </Button>
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/syounin" style={link}>承認</Link>
-            </Button>
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/syounin-huro" style={link}>承認フロー</Link>
-            </Button>
-            <Button sx={{ m: 1, p: 0, color: 'white', display: 'block' }}>
-              <Link to="/user-itiran" style={link}>ユーザー一覧</Link>
-            </Button>
-          </Box>
-
-          <Box sx={{ flexGrow: 1, color: 'white'}}>
-            <Autocomplete
-              sx={{ color: 'white' }}
+          <StyledUserBox>
+            <StyledAutocomplete
               options={users}
               getOptionLabel={(user) => user.name as string}
-              renderInput={(params) => <TextField
-                {...params}
-                placeholder="ユーザ選択"
-                sx={{ color: 'white' }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="ユーザ選択"
                 />
-              }
+              )}
               onChange={(_, value) => {
                 if (value) {
                   setUserID(value.id);
@@ -105,7 +127,7 @@ export default function CustomAppBar() {
               }}
               value={users.find((user) => user.id === userID) || null}
             />
-          </Box>
+          </StyledUserBox>
         </Toolbar>
       </Container>
     </AppBar>
