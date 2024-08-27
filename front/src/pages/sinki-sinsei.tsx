@@ -13,20 +13,9 @@ import Grid from '@mui/material/Grid';
 
 import TextField from '@mui/material/TextField';
 
-import { Application } from "../../openapi/api";
-
 export default function SinkiSinsei() {
 
-  const bull = (
-    <Box
-      component="span"
-      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-    >
-      •
-    </Box>
-  );
-
-  const {userID, setUserID} = useContext(Context)
+  const {userID} = useContext(Context)
   
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
@@ -36,14 +25,9 @@ export default function SinkiSinsei() {
   const [amount, setAmount] = useState(0);
   const [flow_id, setFlow_id] = useState(0);
 
-  const [selectUserID, setSlectUserID] = useState(userID);
-
-
-
-
   const registerSinsei = async () => {
     // const res = await api.application.createApplication({title, date, description, user_id:userID, kind, shop, amount, flow_id})
-    const res = await api.application.createApplication({title, date, description, user_id: selectUserID, kind, shop, amount, flow_id})
+    const res = await api.application.createApplication({title, date, description, user_id: userID, kind, shop, amount, flow_id})
     console.log(res.data)
     // if (!res.data.date || !res.data.description) {
     //   alert((res.error.message))
@@ -106,15 +90,6 @@ const closeModal = () => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            label="ユーザーID"
-            type="number"
-            value={selectUserID}
-            onChange={(e) => setSlectUserID(Number(e.target.value))}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
             label="科目"
             value={kind}
             onChange={(e) => setKind(e.target.value)}
@@ -172,7 +147,7 @@ const closeModal = () => {
           <Grid item xs={2}><Typography>詳細:</Typography></Grid>
           <Grid item xs={4}><Typography>{description}</Typography></Grid>
           <Grid item xs={2}><Typography>ユーザーID:</Typography></Grid>
-          <Grid item xs={4}><Typography>{selectUserID}</Typography></Grid>
+          <Grid item xs={4}><Typography>{userID}</Typography></Grid>
         </Grid>
         <Grid container spacing={2}>
           <Grid item xs={2}><Typography>科目:</Typography></Grid>
