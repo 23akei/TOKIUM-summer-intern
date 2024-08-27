@@ -22,20 +22,24 @@ export default function Syounin() {
     let apprs: ApprovalAndApplication[];
     {
       const res = await api.approvals.getApprovalsByUserId(userID)
-      console.log(res)
-
+      
       apprs = res.data.map(appr => ({approval: appr}))
     }
     {
-      setApprovals(
-        apprs.map(appr => {
-            api.application.getApplicationById(appr.approval.shinsei_id as number).then(res => {
-              appr.application = res.data
-            })
-
-          return appr
+      const asyncs: any[] = [];
+      apprs = apprs.map((appr) => {
+        const a = api.application.getApplicationById(appr.approval.shinsei_id as number)
+        asyncs.push(a)
+        a.then(res => {
+          appr.application = res.data
         })
-      )
+        
+        return appr
+      })
+      
+      Promise.all(asyncs).then(()=>{
+        setApprovals(apprs)
+      })
     }
   }
 
@@ -45,30 +49,60 @@ export default function Syounin() {
     if (res.data.id != undefined) {
       alert("updated approval " + res.data.id)
       getApprovalsByUserID();
-    } else (
+    } else {
       alert(res.error.message)
-    )
+    }
   }
 
   return (
     <>
-      {approvals.length > 0 ?
-        approvals.map(appr =>
-          <div style={{display:"flex", border: "1px solid #000"}}>
-          <p style={{padding: "0 100px"}}>from:{appr.approval.approved_user_id}</p>
-          <p style={{padding: "0 100px"}}>shinsei id:{appr.approval.shinsei_id}</p>
-          <p style={{width: "200px"}}>status:{appr.approval.status}</p>
-          {appr.application && Object.entries(appr.application).map(([k, value]) => (
-            <div key={k}>
-              <span>{value}</span>
+      <div style={{display: "flex", justifyContent: "center"}}>
+      <table border={1} cellPadding={5} >
+      <thead>
+      <tr>
+      <th>Status</th>
+      <th>from user id</th>
+      <th>Shinsei ID</th>
+      <th>Flow ID</th>
+      <th>Title</th>
+      <th>Kind</th>
+      <th>Shop</th>
+      <th>Amount</th>
+      <th>Date</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      {approvals.length > 0 &&
+        approvals.map(appr => (
+          <>
+            <tr>
+            <td>{appr.approval.status}</td>
+            <td>{appr.approval.approved_user_id}</td>
+            <td>{appr.application?.id}</td>
+            <td>{appr.application?.flow_id}</td>
+            <td>{appr.application?.title}</td>
+            <td>{appr.application?.kind}</td>
+            <td>{appr.application?.shop}</td>
+            <td>{appr.application?.amount}</td>
+            <td>{appr.application?.date}</td>
+            <td>
+            <div style={{ display: "flex", alignItems: "center" }}>
+            <button onClick={() => setStatus(appr.approval, "approve")}>承認</button>
+            <button onClick={() => setStatus(appr.approval, "reject")}>却下</button>
             </div>
-          ))}
-          <div style={{display:"flex", alignItems: "center"}}>
-          <button onClick={() => setStatus(appr.approval, "approve")}>承認</button>
-          <button onClick={() => setStatus(appr.approval, "reject")}>却下</button>
-          </div>
-        </div>)
-        : <p>承認するものなし</p>}
+            </td>
+            </tr>
+            </>
+
+        )
+                     )
+      }
+    </tbody>
+      </table>
+
+      </div>
+      {approvals.length <= 0 && <p>承認するものなし</p>}
     </>
   )
 }

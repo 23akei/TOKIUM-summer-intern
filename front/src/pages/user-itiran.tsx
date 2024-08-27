@@ -17,14 +17,25 @@ export default function UserItiran() {
   }, [])
   
   return (
-    <>
-    {users.map(user => (
-      <div style={{display: "flex", justifyContent: "space-around", border:"1px solid"}}>
-        <div>id:{user.id}</div>
-        <div>name:{user.name}</div>
-        <div>role:{user.role}</div>
-      </div>
+    <div style={{display:"flex", justifyContent: "center"}}>
+      <table border={1} cellPadding={5}>
+      <thead>
+      <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Role</th>
+      </tr>
+      </thead>
+      <tbody>
+      {users.map(user => (
+        <tr>
+          <td>{user.id}</td>
+          <td>{user.name}</td>
+          <td>{user.role}</td>
+        </tr>
     ))}
-    </>
+      </tbody>
+    </table>
+    </div>
   )
 }

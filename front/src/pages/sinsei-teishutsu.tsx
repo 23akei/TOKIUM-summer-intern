@@ -40,7 +40,7 @@ export default function SinseiTeishutsu() {
   }
 
   const findSubmittion = (application: Application, submittions: Submittion[]): Submittion | null => {
-    for (let i = 0; i<submittions.length; i++) {
+    for (let i = 0; i < submittions.length; i++) {
       if (submittions[i].shinsei_id == application.id) return submittions[i];
     }
 
@@ -83,37 +83,91 @@ export default function SinseiTeishutsu() {
 
   return (
     <>
-      <div>
+      <div >
         <p>申請提出画面</p>
         <button onClick={submitApplications}>提出</button>
 
         <p>未申請</p>
-        {toSubimitList.map((application) => (
-          <div key={application.id} style={{ border: "1px solid black", display: "flex", justifyContent: "space-between" }}>
-            <input
-              type="checkbox"
-              onChange={(e) => { onSelectApplication(e.target.checked, application.id as number) }}
-              key={application.id}
-            />
-            {Object.entries(application).map(([k, value]) => (
-              <div key={k}>
-                <span>{value}</span>
-              </div>
-            ))}
-          </div>
-        ))}
+        <div style={{ display: "flex", justifyContent: "center" }}>
 
+          <table border={1} cellPadding={5} >
+            <thead>
+              <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Shinsei ID</th>
+                <th>Flow ID</th>
+                <th>User ID</th>
+                <th>Kind</th>
+                <th>Shop</th>
+                <th>Amount</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+
+
+              {toSubimitList.map((app) => (
+                <tr>
+                  <td>
+                    <input
+                      type="checkbox"
+                      onChange={(e) => { onSelectApplication(e.target.checked, app.id as number) }}
+                      key={app.id}
+                    />
+                  </td>
+                  <td>{app.title}</td>
+                  <td>{app.id}</td>
+                  <td>{app.flow_id}</td>
+                  <td>{app.user_id}</td>
+                  <td>{app.kind}</td>
+                  <td>{app.shop}</td>
+                  <td>{app.amount}</td>
+                  <td>{app.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+        </div>
+       
         <p>申請済み</p>
-        {submittedList.map((sub) => (
-          <div key={sub.application?.id} style={{ border: "1px solid black", display: "flex", justifyContent: "space-between" }}>
-            <div>status:{sub.submittion.status}</div>
-            {Object.entries(sub.application as Application).map(([k, value]) => (
-              <div key={k}>
-                <span>{value}</span>
-              </div>
-            ))}
-          </div>
-        ))}
+        <div style={{ display: "flex", justifyContent: "center" }}>
+
+          <table border={1} cellPadding={5} >
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Title</th>
+                <th>Shinsei ID</th>
+                <th>Flow ID</th>
+                <th>User ID</th>
+                <th>Kind</th>
+                <th>Shop</th>
+                <th>Amount</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+
+
+              {submittedList.map((sub) => (
+                <tr>
+                  <td>{sub.submittion.status}</td>
+                  <td>{sub.application?.title}</td>
+                  <td>{sub.application?.id}</td>
+                  <td>{sub.application?.flow_id}</td>
+                  <td>{sub.application?.user_id}</td>
+                  <td>{sub.application?.kind}</td>
+                  <td>{sub.application?.shop}</td>
+                  <td>{sub.application?.amount}</td>
+                  <td>{sub.application?.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+        </div>
       </div>
     </>
   )
