@@ -31,7 +31,8 @@ const StyledBox = styled(Box)`
 const StyledUserBox = styled(Box)`
  flex-grow: 2;
  display: right;
- height: 90%;
+ margin-left: 50px;
+ min-width: 100px;
 `;
 
 const StyledAutocomplete = styled(Autocomplete)`
@@ -80,7 +81,7 @@ export default function CustomAppBar() {
   ];
 
   return (
-    <AppBar position="static" sx={{ marginBottom: "50px" }}>
+    <AppBar position="static" style={{ marginBottom: "50px" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
