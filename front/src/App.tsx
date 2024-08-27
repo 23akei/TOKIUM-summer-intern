@@ -9,6 +9,7 @@ import { Context } from './Context.tsx'
 import { useState } from 'react'
 import Syounin from './pages/syounin.tsx'
 import UserItiran from './pages/user-itiran.tsx'
+import AppBar from './components/app-bar.tsx'
 
 function App() {
   const [userID, setUserID] = useState(0)
@@ -17,12 +18,13 @@ function App() {
 
     
     <Context.Provider value={{ userID, setUserID }}>
-      <span>user id:</span>
-      <input type="number" value={userID} onChange={(event) => setUserID(event.target.valueAsNumber)} />
+      {/* <span>user id:</span>
+      <input type="number" value={userID} onChange={(event) => setUserID(event.target.valueAsNumber)} /> */}
 
     <BrowserRouter>
       <>
-        <div>
+        <AppBar></AppBar>
+        {/* <div>
           <Link to="/sinki-user-sakusei">
             新規ユーザー作成
           </Link>
@@ -50,7 +52,7 @@ function App() {
           <Link to="/">
             Home
           </Link>
-        </div>
+        </div> */}
 
       <Routes>
         <Route path="/" element={<>
