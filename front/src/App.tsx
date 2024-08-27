@@ -12,13 +12,17 @@ import UserItiran from './pages/user-itiran.tsx'
 import SyouninHuroItiran from './pages/syounin-huro-itiran.tsx'
 import AppBar from './components/app-bar.tsx'
 
+import Map from './components/map.tsx'
+import PlacesList from './components/places.tsx'
+
 
 function App() {
   const [userID, setUserID] = useState(0)
+  const [location, setLocation] = useState<{ lat: number; lng: number }>({ lat: 40.748817, lng: -73.985428 });
 
   return (
 
-    
+
     <Context.Provider value={{ userID, setUserID }}>
       {/* <span>user id:</span>
       <input type="number" value={userID} onChange={(event) => setUserID(event.target.valueAsNumber)} /> */}
@@ -26,48 +30,17 @@ function App() {
     <BrowserRouter>
       <>
         <AppBar></AppBar>
-        {/* <div>
-          <Link to="/sinki-user-sakusei">
-            新規ユーザー作成
-          </Link>
-          <div></div>
-          <Link to="/sinki-sinsei">
-            新規申請
-          </Link>
-          <div></div>
-          <Link to="/sinsei-teishutsu">
-            申請提出
-          </Link>
-          <div></div>
-          <Link to="/syounin">
-            承認
-          </Link>
-          <div></div>
-          <Link to="/syounin-huro">
-            承認フロー
-          </Link>
-          <div></div>
-          <Link to="/user-itiran">
-            ユーザー一覧
-          </Link>
-          <div></div>
-          <Link to="/syounin-huro-itiran">
-              承認フロー一覧
-          </Link>
-          <div></div>
 
-          <div/>
-          <Link to="/">
-            Home
-          </Link>
-        </div> */}
+
+        <Map />
+      <PlacesList location={location} />
 
       <Routes>
         <Route path="/" element={<>
             <Header/>
-            <p>hello tokium</p> 
+            <p>hello tokium</p>
           </>}>
-          
+
         </Route>
         <Route path="/sinki-user-sakusei" element={<SinkiUserSakusei></SinkiUserSakusei>}>
         </Route>
@@ -77,22 +50,22 @@ function App() {
 
         <Route path='/sinsei-teishutsu' element={<SinseiTeishutsu/>}>
         </Route>
-      
+
         <Route path="/syounin" element={<Syounin></Syounin>}>
-      
+
         </Route>
         <Route path='/syounin-huro' element={<SyoninHuro></SyoninHuro>}>
         </Route>
         <Route path='/syounin-huro-itiran' element={<SyouninHuroItiran></SyouninHuroItiran>}>
         </Route>
-        
+
         <Route path='/user-itiran' element={<UserItiran/>} />
-      
+
       </Routes>
-      
+
      </>
 
-    </BrowserRouter> 
+    </BrowserRouter>
     </Context.Provider>
   )
 }
