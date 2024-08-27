@@ -45,7 +45,7 @@ export default function CustomAppBar() {
 
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+            <Button sx={{ m: 1, color: 'white', display: 'block' }}>
               <Link to="/" style={link}>Home</Link>
             </Button>
 
