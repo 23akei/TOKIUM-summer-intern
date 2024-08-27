@@ -160,8 +160,6 @@ export default function Syounin() {
     </>
   )
 
-  console.log("rerender")
-
   return (
     <>
       <Kensaku approvals={approvals} setKensakuApprovals={setKensakuApprovals} unselectAll={unselectAll}/>
