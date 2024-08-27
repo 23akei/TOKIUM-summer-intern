@@ -2,9 +2,9 @@ import { useEffect, useState, useContext } from "react"
 import {api} from "../const"
 import { Approval, Application } from "../../openapi/api";
 import { Context } from '../Context.tsx'
+import Kensaku from "../components/kensaku"
 
-
-interface ApprovalAndApplication {
+export interface ApprovalAndApplication {
   approval: Approval,
   application?: Application
 }
@@ -13,6 +13,8 @@ export default function Syounin() {
 
   const {userID} = useContext(Context);
   const [approvals, setApprovals] = useState<ApprovalAndApplication[]>([]);
+  const [kensakuApprovals, setKensakuApprovals] = useState<ApprovalAndApplication[]|null>(null)
+  const [selectedApprovals, setSelectedApprovals] = useState<ApprovalAndApplication[]>([])
 
   useEffect(()=>{
     getApprovalsByUserID();
@@ -54,29 +56,78 @@ export default function Syounin() {
     }
   }
 
-  return (
-    <>
-      <div style={{display: "flex", justifyContent: "center"}}>
-      <table border={1} cellPadding={5} >
-      <thead>
-      <tr>
-      <th>Status</th>
-      <th>from user id</th>
-      <th>Shinsei ID</th>
-      <th>Flow ID</th>
-      <th>Title</th>
-      <th>Kind</th>
-      <th>Shop</th>
-      <th>Amount</th>
-      <th>Date</th>
-      </tr>
-      </thead>
-      <tbody>
+  const setStatusForSelected = async (status: string) => {
+    const promises: any = []
+    
+    selectedApprovals.forEach(appr => {
+      (async () => {
+        appr.approval.status = status
+        const promise = api.approvals.updateApproval(appr.approval)
+        promises.push(promise)
+        const res = await promise
+        if (res.data.id != undefined) {
+        } else {
+          alert(res.error.message)
+        }
+      })()
+    })
 
-      {approvals.length > 0 &&
-        approvals.map(appr => (
+    Promise.all(promises).then(()=>{
+      getApprovalsByUserID()
+    })
+    
+  }
+
+  const onSelectApproval = (checked: boolean, appr: ApprovalAndApplication) => {
+    if (checked) {
+      if (isSelected(appr)) return;
+      selectedApprovals.push(appr)
+      setSelectedApprovals(structuredClone(selectedApprovals))
+    } else {
+      if (isSelected(appr)) {
+        setSelectedApprovals(
+          selectedApprovals.filter(selected_appr => {
+            if (selected_appr.approval.id == appr.approval.id) return false
+            return true
+          })
+        )
+      }
+    }
+  }
+  
+  const selectAll = () => {
+    if (kensakuApprovals != null) {
+      setSelectedApprovals(structuredClone(kensakuApprovals))
+    } else {
+      setSelectedApprovals(structuredClone(approvals))
+    }
+  }
+  
+  const unselectAll = () => {
+    setSelectedApprovals([])
+  }
+  
+  const isSelected = (appr:ApprovalAndApplication) => {
+    for (let i = 0; i<selectedApprovals.length; i++) {
+      if (selectedApprovals[i].approval.id == appr.approval.id) {
+        return true
+      }
+    }
+    return false
+  }
+  
+  const approvalsList = (apprs: ApprovalAndApplication[]) => {
+    return (
+      <>
+      {apprs.length > 0 &&
+        apprs.map(appr => (
           <>
             <tr>
+            <td><input type="checkbox"
+          checked={isSelected(appr)}
+          onChange={(e)=>{ onSelectApproval(e.target.checked, appr)}}
+          key={appr.approval.id}
+            /></td>
             <td>{appr.approval.status}</td>
             <td>{appr.approval.approved_user_id}</td>
             <td>{appr.application?.id}</td>
@@ -98,11 +149,47 @@ export default function Syounin() {
         )
                      )
       }
+
+      </>
+    )
+  }
+
+  const checkEmpty = (apprs: ApprovalAndApplication[]) => (
+    <>
+      {apprs.length <= 0 && <p>承認するものなし</p>}
+    </>
+  )
+
+  return (
+    <>
+      <Kensaku approvals={approvals} setKensakuApprovals={setKensakuApprovals} unselectAll={unselectAll}/>
+      {kensakuApprovals!=null && (<p>{kensakuApprovals.length}件ヒット</p>)}
+      <button onClick={selectAll}>すべて選択</button>
+      <button onClick={unselectAll}>選択解除</button>
+      <button onClick={() => setStatusForSelected("approve")}>まとめて承認</button>
+      <button onClick={() => setStatusForSelected("reject")}>まとめて却下</button>
+      <div style={{display: "flex", justifyContent: "center"}}>
+      <table border={1} cellPadding={5} >
+      <thead>
+      <tr>
+      <th></th>
+      <th>Status</th>
+      <th>from user id</th>
+      <th>Shinsei ID</th>
+      <th>Flow ID</th>
+      <th>Title</th>
+      <th>Kind</th>
+      <th>Shop</th>
+      <th>Amount</th>
+      <th>Date</th>
+      </tr>
+      </thead>
+      <tbody>      
+      {approvalsList(kensakuApprovals==null?approvals:kensakuApprovals)}
     </tbody>
       </table>
-
       </div>
-      {approvals.length <= 0 && <p>承認するものなし</p>}
+      {checkEmpty(kensakuApprovals==null?approvals:kensakuApprovals)}
     </>
   )
 }

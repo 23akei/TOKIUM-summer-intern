@@ -77,29 +77,30 @@ export default function CustomAppBar() {
     { "link": "/sinsei-teishutsu", "label": "申請提出" },
     { "link": "/syounin", "label": "承認" },
     { "link": "/syounin-huro", "label": "承認フロー" },
+    { "link": "/syounin-huro-itiran", "label": "承認フロー一覧"},
     { "link": "/user-itiran", "label": "ユーザー一覧" },
   ];
 
   return (
     <AppBar position="static" style={{ marginBottom: "50px" }}>
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Kimochi++
-          </Typography>
+      <Toolbar disableGutters>
+      <Typography
+    variant="h6"
+    noWrap
+    component="div"
+    sx={{
+      mr: 2,
+      display: { xs: 'none', md: 'flex' },
+      fontFamily: 'monospace',
+      fontWeight: 700,
+      letterSpacing: '.3rem',
+      color: 'inherit',
+      textDecoration: 'none',
+    }}
+      >
+      Kimochi++
+    </Typography>
 
           <StyledBox>
             {menuLink.map((item) => (
@@ -108,6 +109,7 @@ export default function CustomAppBar() {
               </StyledButton>
             ))}
           </StyledBox>
+
 
           <StyledUserBox>
             <StyledAutocomplete
@@ -131,6 +133,6 @@ export default function CustomAppBar() {
           </StyledUserBox>
         </Toolbar>
       </Container>
-    </AppBar>
+      </AppBar>
   );
 }
