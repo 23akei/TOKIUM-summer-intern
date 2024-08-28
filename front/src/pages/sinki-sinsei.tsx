@@ -1,5 +1,5 @@
 import {api} from "../const"
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { Context } from "../Context";
 
 import Box from '@mui/material/Box';
@@ -46,6 +46,10 @@ const closeModal = () => {
   setIsModalOpen(false);
 };
 
+
+useEffect(() =>{
+  setSlectUserID(userID);
+}, [userID]);
 
 
 // エクセル風のインプット欄
@@ -130,6 +134,16 @@ const closeModal = () => {
             value={flow_id}
             onChange={(e) => setFlow_id(Number(e.target.value))}
             fullWidth
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="ユーザーID"
+            value={selectUserID}
+            onChange={(e) => setSlectUserID(Number(e.target.value))}
+            variant="outlined"
+            fullWidth
+            disabled
           />
         </Grid>
         <Box mb={15} />
