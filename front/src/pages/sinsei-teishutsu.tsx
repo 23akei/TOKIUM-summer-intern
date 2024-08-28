@@ -2,6 +2,11 @@ import { useContext, useEffect, useState } from "react"
 import { api } from "../const"
 import { Application, Submittion } from "../../openapi/api";
 import { Context } from "../Context";
+import styled from '@emotion/styled';
+import { Box, Button, Checkbox, Table, TableBody, TableContainer,TableCell,TableHead, TableRow, Typography, Paper} from "@mui/material";
+
+
+
 
 
 interface SubmittionAndApplication {
@@ -84,90 +89,92 @@ export default function SinseiTeishutsu() {
   return (
     <>
       <div >
-        <p>申請提出画面</p>
-        <button onClick={submitApplications}>提出</button>
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          申請提出画面
+        </Typography>
+        <Button variant="contained" color="primary" onClick={submitApplications}>
+          提出
+        </Button>
 
-        <p>未申請</p>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-
-          <table border={1} cellPadding={5} >
-            <thead>
-              <tr>
-                <th></th>
-                <th>Title</th>
-                <th>Shinsei ID</th>
-                <th>Flow ID</th>
-                <th>User ID</th>
-                <th>Kind</th>
-                <th>Shop</th>
-                <th>Amount</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-
-
+        <Typography variant="h6" gutterBottom mt={4}>
+          未申請
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead sx={{ backgroundColor: '#c9c9c9', color: 'white' }}>
+              <TableRow >
+                <TableCell></TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Shinsei ID</TableCell>
+                <TableCell>Flow ID</TableCell>
+                <TableCell>User ID</TableCell>
+                <TableCell>Kind</TableCell>
+                <TableCell>Shop</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Date</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {toSubimitList.map((app) => (
-                <tr>
-                  <td>
-                    <input
-                      type="checkbox"
-                      onChange={(e) => { onSelectApplication(e.target.checked, app.id as number) }}
-                      key={app.id}
+                <TableRow key={app.id}>
+                  <TableCell>
+                    <Checkbox
+                      onChange={(e) =>
+                        onSelectApplication(e.target.checked, app.id as number)
+                      }
                     />
-                  </td>
-                  <td>{app.title}</td>
-                  <td>{app.id}</td>
-                  <td>{app.flow_id}</td>
-                  <td>{app.user_id}</td>
-                  <td>{app.kind}</td>
-                  <td>{app.shop}</td>
-                  <td>{app.amount}</td>
-                  <td>{app.date}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell>{app.title}</TableCell>
+                  <TableCell>{app.id}</TableCell>
+                  <TableCell>{app.flow_id}</TableCell>
+                  <TableCell>{app.user_id}</TableCell>
+                  <TableCell>{app.kind}</TableCell>
+                  <TableCell>{app.shop}</TableCell>
+                  <TableCell>{app.amount}</TableCell>
+                  <TableCell>{app.date}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-        </div>
-       
-        <p>申請済み</p>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-
-          <table border={1} cellPadding={5} >
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Title</th>
-                <th>Shinsei ID</th>
-                <th>Flow ID</th>
-                <th>User ID</th>
-                <th>Kind</th>
-                <th>Shop</th>
-                <th>Amount</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-
-
+        <Typography variant="h6" gutterBottom mt={4}>
+          申請済み
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: '#c9c9c9', color: 'white' }}>
+                <TableCell>Status</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Shinsei ID</TableCell>
+                <TableCell>Flow ID</TableCell>
+                <TableCell>User ID</TableCell>
+                <TableCell>Kind</TableCell>
+                <TableCell>Shop</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Date</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {submittedList.map((sub) => (
-                <tr>
-                  <td>{sub.submittion.status}</td>
-                  <td>{sub.application?.title}</td>
-                  <td>{sub.application?.id}</td>
-                  <td>{sub.application?.flow_id}</td>
-                  <td>{sub.application?.user_id}</td>
-                  <td>{sub.application?.kind}</td>
-                  <td>{sub.application?.shop}</td>
-                  <td>{sub.application?.amount}</td>
-                  <td>{sub.application?.date}</td>
-                </tr>
+                <TableRow key={sub.application?.id}>
+                  <TableCell>{sub.submittion.status}</TableCell>
+                  <TableCell>{sub.application?.title}</TableCell>
+                  <TableCell>{sub.application?.id}</TableCell>
+                  <TableCell>{sub.application?.flow_id}</TableCell>
+                  <TableCell>{sub.application?.user_id}</TableCell>
+                  <TableCell>{sub.application?.kind}</TableCell>
+                  <TableCell>{sub.application?.shop}</TableCell>
+                  <TableCell>{sub.application?.amount}</TableCell>
+                  <TableCell>{sub.application?.date}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-
-        </div>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
       </div>
     </>
   )
