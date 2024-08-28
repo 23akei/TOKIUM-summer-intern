@@ -1,5 +1,5 @@
 import {api} from "../const"
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { Context } from "../Context";
 import GMap from '../components/map.tsx'
 
@@ -36,6 +36,7 @@ export default function SinkiSinsei() {
   const [shop, setShop] = useState("");
   const [amount, setAmount] = useState(0);
   const [flow_id, setFlow_id] = useState(0);
+  const [shopNameFromMap, setShopNameFromMap] = useState("");
 
   const [selectUserID, setSlectUserID] = useState(userID);
 
@@ -51,16 +52,19 @@ export default function SinkiSinsei() {
     alert("Title is " + res.data.title + " description is " + res.data.description)
 }
 
-const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-const openModal = () => {
-  setIsModalOpen(true);
-};
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
 
-const closeModal = () => {
-  setIsModalOpen(false);
-};
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
+  useEffect(() => {
+    setShop(shopNameFromMap)
+  }, [shopNameFromMap]);
 
 
 // エクセル風のインプット欄
@@ -205,7 +209,7 @@ const closeModal = () => {
             >
               <DialogContent>
               <h2>店舗マップ</h2>
-              <GMap />
+              <GMap setShopName={setShopNameFromMap} />
               <div>店舗名: <TextField value={shop} onChange={(event) => setShop(event.target.value)} /></div>
               <Button onClick={closeModal}>閉じる</Button>
               </DialogContent>
