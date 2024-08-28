@@ -57,6 +57,22 @@ module Api
         end
       end
 
+      # DELETE /api/v1/webhook/:id
+      def destroy
+        begin
+          webhook = Webhook.find(params[:id])
+          if !webhook.destroy
+            render json: { message: 'Webhook not deleted' }, status: :unprocessable_entity
+          else
+            render json: {message: 'Delete successfully'}, status: :ok
+          end
+        rescue ActiveRecord::RecordNotFound
+          render json: { message: 'Webhook not found' }, status: :not_found
+        rescue => e
+          render json: { message: e.message }, status: :internal_server_error
+        end
+      end
+
       private
 
       def webhook_params
