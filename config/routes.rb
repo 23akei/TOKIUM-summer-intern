@@ -28,11 +28,11 @@ Rails.application.routes.draw do
       put 'approvals', to: 'approvals#update'
       get 'approvals/user/:id', to: 'approvals#get_applications_by_user_needs_to_approve'
 
-      # /webhooks
-      post 'webhooks', to: 'webhooks#create'
-      get 'webhooks', to: 'webhooks#index'
-      get 'webhooks/user/:user_id', to: 'webhooks#user'
-      get 'webhooks/entries', to: 'webhooks#entries'
+      # /webhook
+      post 'webhook', to: 'webhooks#create'
+      get 'webhook', to: 'webhooks#index'
+      get 'webhook/user/:user_id', to: 'webhooks#user'
+      get 'webhook/entries', to: 'webhooks#entries'
     end
   end
 end
