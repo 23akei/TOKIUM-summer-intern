@@ -52,3 +52,8 @@ docker compose run app rails db:migrate
 ```bash
 bin/rails generate model モデル名 カラム名:型 カラム名:型 ...
 ```
+
+## Webhook
+### entry:
+submittion: フックを登録したユーザーの提出した申請の承認が完了したとき
+approval: フックを登録したユーザーに承認依頼がきたとき
