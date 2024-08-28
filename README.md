@@ -14,6 +14,10 @@ docker compose run app rails db:setup
 docker compose run app rails db:migrate
 ```
 
+#### 環境変数
+Google Maps APIキーの設定: `front/.env`にGoogle Maps APIのAPIキーとmap idを設定する必要があります。
+`front/.env.example`を参考にして`front/.env`を作成してください。
+
 ### サーバー起動
 ```bash
 docker compose build

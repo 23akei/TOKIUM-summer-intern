@@ -11,6 +11,7 @@
     "openapi": "swagger-typescript-api -p ./openapi/openapi.yml -o ./openapi -n api.ts"
   },
   "dependencies": {
+    "@vis.gl/react-google-maps": "^1.1.0",
     "axios": "^1.7.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
