@@ -28,7 +28,7 @@ interface RowData {
   
 }
 
-export default function SinkiSinsei2() {
+export default function SinkiSinsei() {
 
   const {userID, setUserID} = useContext(Context)
   
@@ -170,7 +170,7 @@ useEffect(() => {
 
   return (
       <>
-      <Typography variant="h6">新規申請2</Typography>
+      <Typography variant="h6">新規申請</Typography>
       <Box mb={4} />
       <TableContainer>
       <Table >
