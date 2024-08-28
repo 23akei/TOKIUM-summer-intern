@@ -72,7 +72,8 @@ services:
       dockerfile: docker/front/Dockerfile
     command: >
       sh -c
-      "yarn install && yarn openapi &&
+      "cp openapi/openapi.yml public/openapi.yml &&
+      yarn install && yarn openapi &&
       yarn dev"
     volumes:
       - ./front:/app
