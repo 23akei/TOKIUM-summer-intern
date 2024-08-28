@@ -26,23 +26,21 @@ export default function WebhookTouroku() {
 
   const fetch = async () => {
     try {
-      // const res0 = await api.webhook.getWebhookEntries()
-      // if (res0.data) {
-        // setEntries(res0.data)
-        setEntries(["submittion", "approval"])
-      // } else {
-        // alert("failed to fetch webhookentries")
-      // }
+      const res0 = await api.webhook.getWebhookEntries()
+      if (res0.data) {
+        setEntries(res0.data)
+      } else {
+        alert("failed to fetch webhookentries")
+      }
 
-      // const res1 = await api.webhook.getWebhooksByUserId(userID)
-      // if (res1.data) {
-        // setWebhooks(
-          // res1.data
-        // )
-      setWebhooks([{id:0, url: "https://myserver.com/submittion", entry:"submittion"}, {id:1, url: "https://myserver.com/approval", entry:"approval"}])
-      // } else {
-        // alert("failed to fetch webhooks")
-      // }
+      const res1 = await api.webhook.getWebhooksByUserId(userID)
+      if (res1.data) {
+        setWebhooks(
+          res1.data
+        )
+      } else {
+        alert("failed to fetch webhooks")
+      }
 
     } catch( error ) {
       alert("fetch failed: see the console")
@@ -51,13 +49,13 @@ export default function WebhookTouroku() {
   }
 
   const isCreateWebhookValid = () : boolean => {
-    if (!createWebhook?.entry || !createWebhook.url) return false
+    if (!createWebhook.entry || !createWebhook.url) return false
 
     return true
   }
 
   const registerWebhook = async () => {
-    if (!isCreateWebhookValid) {
+    if (!isCreateWebhookValid()) {
       alert("invalid input")
       return 
     }
@@ -71,6 +69,8 @@ export default function WebhookTouroku() {
       alert("error: see the console")
       console.error(error)
     }
+
+    fetch()
   }
 
   useEffect(() => {
