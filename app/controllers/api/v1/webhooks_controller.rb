@@ -50,8 +50,8 @@ module Api
       # GET /api/v1/webhook/entries
       def entries
         begin
-          entries = WebhookEntry.ENTRY.keys
-          render json: entries, status: :ok
+          entries = Webhookentry::ENTRY.keys
+          render json: [entries], status: :ok
         rescue => e
           render json: { error: e.message }, status: :internal_server_error
         end

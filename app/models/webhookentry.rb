@@ -1,4 +1,4 @@
-class WebhookEntry < ApplicationRecord
+class Webhookentry < ApplicationRecord
   ENTRY = {
     submittion: 'submittion',
     approval: 'approval',
