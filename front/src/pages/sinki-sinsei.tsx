@@ -109,31 +109,53 @@ const handleInputChange = (
   setRows(updatedRows);
 };
 
-const registerSinsei = async () => {
-  try {
-    for (const row of rows) {
-      const res = await api.application.createApplication({
-        title: row.title,
-        date: row.date,
-        description: row.description,
-        user_id: row.selectUserID,
-        kind: row.kind,
-        shop: row.shop,
-        amount: row.amount,
-        flow_id: row.flow_id,
-      });
-
-      if (!res.data.date || !res.data.description) {
-        alert(res.error.message);
-      } else {
-        alert(
-          "Title is " + res.data.title + " description is " + res.data.description
-        );
-      }
+const isSinseiValid = () => {
+  for (const row of rows) {
+    if (!row.title) {
+      alert("title cannot be empty")
+      return false
     }
-  } catch (error) {
-    console.error("Error registering application:", error);
-    alert("Error registering application.");
+    if (row.amount<=0) {
+      alert("amount must be greater than 0")
+      return false
+    }
+  }
+
+  return true
+}  
+  
+const registerSinsei = async () => {
+  if (!isSinseiValid()) return
+  
+  const errors = []
+  const promises = []
+  for (const row of rows) {
+    const promise = api.application.createApplication({
+      title: row.title,
+      date: row.date,
+      description: row.description,
+      user_id: row.selectUserID,
+      kind: row.kind,
+      shop: row.shop,
+      amount: row.amount,
+      flow_id: row.flow_id,
+    });
+    promises.push(promise)
+
+    const res = await promise
+    if (res.data) {
+      alert("申請登録しました");
+    } else if (res.error){
+      errors.push(res.error)
+    }
+  }
+
+  await Promise.all(promises)
+
+  if( errors.length >0 ) {
+    console.log("申請エラー")
+    console.log(errors)
+    alert("Error: see the console")
   }
 };
 
