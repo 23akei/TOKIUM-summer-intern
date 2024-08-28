@@ -3,18 +3,13 @@ import { useState, useContext, useEffect } from "react"
 import { Context } from "../Context";
 
 import Box from '@mui/material/Box';
-// import Card from '@mui/material/Card';
-// import CardActions from '@mui/material/CardActions';
-// import CardContent from '@mui/material/CardContent';
+import { Dialog, DialogContent } from "@mui/material";
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-// import Container from '@mui/material/Container';
-// import Grid from '@mui/material/Grid';
-
 import TextField from '@mui/material/TextField';
+import { Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material";
 
-import { Table, TableBody, TableCell, TableContainer, TableRow,  } from "@mui/material";
-
+import GMap from "../components/map";
 
 interface RowData {
   title: string;
@@ -25,38 +20,17 @@ interface RowData {
   amount: number;
   flow_id: number;
   selectUserID: number;
-  
+
 }
 
 export default function SinkiSinsei2() {
 
   const {userID, setUserID} = useContext(Context)
-  
-  // const [title, setTitle] = useState("");
-  // const [date, setDate] = useState("");
-  // const [description, setDescription] = useState("");
-  // const [kind, setKind] = useState("");
+
   const [shop, setShop] = useState("");
-  // const [amount, setAmount] = useState(0);
-  // const [flow_id, setFlow_id] = useState(0);
-
   const [selectUserID, setSelectUserID] = useState(userID);
-
   const [currentRowIndex, setCurrentRowIndex] = useState<number | null>(null);
-
-
-
-
-//   const registerSinsei = async () => {
-//     // const res = await api.application.createApplication({title, date, description, user_id:userID, kind, shop, amount, flow_id})
-//     const res = await api.application.createApplication({title, date, description, user_id: selectUserID, kind, shop, amount, flow_id})
-//     console.log(res.data)
-//     if (!res.data.date || !res.data.description) {
-//       alert((res.error.message))
-//     }
-
-//     alert("Title is " + res.data.title + " description is " + res.data.description)
-// }
+  const [shopNameFromMap, setShopNameFromMap] = useState("");
 
 const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -76,6 +50,9 @@ const closeModal = () => {
   setIsModalOpen(false);
 };
 
+useEffect(() => {
+  setShop(shopNameFromMap)
+}, [shopNameFromMap]);
 
 const [rows, setRows] = useState<RowData[]>([
   {
@@ -186,10 +163,10 @@ useEffect(() => {
                   }
                   variant="outlined"
                   style={{ width: '150px' }} // 幅を指定
-                  
+
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}> 
+              <TableCell sx={{ padding: '5px' }}>
                 <TextField
                   label="日付"
                   type="date"
@@ -204,7 +181,7 @@ useEffect(() => {
                   }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}> 
+              <TableCell sx={{ padding: '5px' }}>
                 <TextField
                   label="詳細"
                   value={row.description}
@@ -212,10 +189,10 @@ useEffect(() => {
                     handleInputChange(index, "description", e.target.value)
                   }
                   variant="outlined"
-                  style={{ width: '150px' }} 
+                  style={{ width: '150px' }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}> 
+              <TableCell sx={{ padding: '5px' }}>
                 <TextField
                   label="科目"
                   value={row.kind}
@@ -223,10 +200,10 @@ useEffect(() => {
                     handleInputChange(index, "kind", e.target.value)
                   }
                   variant="outlined"
-                  style={{ width: '150px' }} 
+                  style={{ width: '150px' }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}> 
+              <TableCell sx={{ padding: '5px' }}>
                 <TextField
                   label="店舗"
                   value={row.shop}
@@ -234,7 +211,7 @@ useEffect(() => {
                     handleInputChange(index, "shop", e.target.value)
                   }
                   variant="outlined"
-                  style={{ width: '150px' }} 
+                  style={{ width: '150px' }}
                 />
               </TableCell>
               <TableCell sx={{ padding: '5px'}}>
@@ -242,8 +219,8 @@ useEffect(() => {
                 <Button onClick={() => openModal(index)}>マップ</Button>
               </TableCell>
               </TableCell>
-            
-              <TableCell sx={{ padding: '5px' }}> 
+
+              <TableCell sx={{ padding: '5px' }}>
                 <TextField
                   label="金額"
                   type="number"
@@ -258,7 +235,7 @@ useEffect(() => {
                   fullWidth
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}> 
+              <TableCell sx={{ padding: '5px' }}>
                 <TextField
                   label="Flow ID"
                   type="number"
@@ -273,7 +250,7 @@ useEffect(() => {
                   fullWidth
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}> 
+              <TableCell sx={{ padding: '5px' }}>
                 {/* <TextField
                   label="ユーザーID"
                   value={row.selectUserID}
@@ -292,7 +269,7 @@ useEffect(() => {
                 />
                 {/* <Typography variant="h6">{selectUserID}</Typography> */}
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}> 
+              <TableCell sx={{ padding: '5px' }}>
                 <Button
                   variant="outlined"
                   color="secondary"
@@ -332,25 +309,26 @@ useEffect(() => {
     </Button>
 
 
-          {isModalOpen && (
-            <div style={{
-            position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-            backgroundColor: "white", padding: "20px", border: "1px solid #ccc", zIndex: 1000
-            }}>
-              <h2>店舗マップ</h2>
-              <p>店舗名: <input value={shop} onChange={(event) => setShop(event.target.value)} /></p>
-              <button onClick={closeModal}>閉じる</button>
-            </div>
-          )}
-
-          {/* モーダルの背面部分 */}
-          {isModalOpen && (
-            <div style={{
-              position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
-              backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 999
-            }} onClick={closeModal}></div>
-          )}
-              
+            {/* 地図表示モーダル */}
+            <Dialog
+              open={isModalOpen}
+              onClose={closeModal}
+              fullWidth
+              maxWidth="lg"
+            >
+              <DialogContent>
+                <Typography variant="h4">店舗マップ</Typography>
+                <Typography variant="body1">マップ上の施設を選択すると店舗名が入力されます</Typography>
+                <GMap setShopName={setShopNameFromMap} />
+                  <TextField
+                    label="店舗名"
+                    value={shop}
+                    onChange={(event) => setShop(event.target.value)}
+                    fullWidth
+                  />
+                  <Button variant="contained" onClick={closeModal}>閉じる</Button>
+              </DialogContent>
+            </Dialog>
       </>
   )
 }

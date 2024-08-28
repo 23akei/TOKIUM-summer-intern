@@ -1,4 +1,4 @@
-import { Link, Routes, Route, BrowserRouter } from 'react-router-dom'
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import './App.css'
 import Header from './components/header.tsx'
 import SinkiUserSakusei from './pages/sinki-user-sakusei.tsx'
@@ -16,7 +16,6 @@ import AppBar from './components/app-bar.tsx'
 
 function App() {
   const [userID, setUserID] = useState(0)
-  const [location, setLocation] = useState<{ lat: number; lng: number }>({ lat: 40.748817, lng: -73.985428 });
 
   return (
 
