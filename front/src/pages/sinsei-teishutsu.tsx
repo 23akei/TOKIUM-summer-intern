@@ -20,9 +20,24 @@ export default function SinseiTeishutsu() {
   const [submittedList, setSubmittedList] = useState<SubmittionAndApplication[]>([]); //submitted already
   const [selectedApplicationIDs, setSelectedApplicationIDs] = useState<number[]>([]);
 
+  const selectAllApplications = () => {
+    setSelectedApplicationIDs(
+      toSubimitList.map(application => application.id)
+    )
+  }
+  const unselectAllApplications = () => {
+    setSelectedApplicationIDs(
+      []
+    )
+  }
+  
+  const isApplicationSelected = (application_id: number): boolean => {
+    return selectedApplicationIDs.includes(application_id)
+  }
+  
   const onSelectApplication = (checked: boolean, application_id: number) => {
     if (checked) {
-      if (!selectedApplicationIDs.includes(application_id)) {
+      if (!isApplicationSelected(application_id)) {
         selectedApplicationIDs.push(application_id);
       }
     } else {
@@ -100,6 +115,14 @@ export default function SinseiTeishutsu() {
         <Typography variant="h6" gutterBottom mt={4}>
           未申請
         </Typography>
+        <div>
+         <Button variant="contained"  style={{ backgroundColor: 'grey', color: 'white' }}  onClick={selectAllApplications}>
+          すべて選択
+         </Button>
+         <Button variant="contained" style={{ backgroundColor: 'grey', color: 'white' }} onClick={unselectAllApplications}>
+          すべて選択解除
+          </Button>
+        </div>
         <TableContainer component={Paper}>
           <Table>
             <TableHead sx={{ backgroundColor: '#c9c9c9', color: 'white' }}>
@@ -123,6 +146,7 @@ export default function SinseiTeishutsu() {
                       onChange={(e) =>
                         onSelectApplication(e.target.checked, app.id as number)
                       }
+                      checked={isApplicationSelected(app.id)}
                     />
                   </TableCell>
                   <TableCell>{app.title}</TableCell>
