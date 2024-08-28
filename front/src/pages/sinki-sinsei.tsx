@@ -208,10 +208,16 @@ export default function SinkiSinsei() {
               maxWidth="lg"
             >
               <DialogContent>
-              <h2>店舗マップ</h2>
-              <GMap setShopName={setShopNameFromMap} />
-              <div>店舗名: <TextField value={shop} onChange={(event) => setShop(event.target.value)} /></div>
-              <Button onClick={closeModal}>閉じる</Button>
+                <Typography variant="h4">店舗マップ</Typography>
+                <Typography variant="body1">マップ上の施設を選択すると店舗名が入力されます</Typography>
+                <GMap setShopName={setShopNameFromMap} />
+                  <TextField
+                    label="店舗名"
+                    value={shop}
+                    onChange={(event) => setShop(event.target.value)}
+                    fullWidth
+                  />
+                  <Button variant="contained" onClick={closeModal}>閉じる</Button>
               </DialogContent>
             </Dialog>
 

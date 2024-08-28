@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Map, APIProvider, MapMouseEvent, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 
 const containerStyle: React.CSSProperties = {
-  padding: '20px',
   width: '100%',
   height: '600px',
   minWidth: '500px',
