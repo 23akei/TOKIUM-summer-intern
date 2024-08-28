@@ -19,7 +19,7 @@ class WebhookService
     request = Net::HTTP::Post.new(uri.request_uri)
     request['Content-Type'] = 'application/json'
     request.body = {
-      entry_type: entry_type
+      entry_type: entry_type,
       message: message
     }.to_json
     http.request(request)
