@@ -3,52 +3,166 @@ import { useState, useContext, useEffect } from "react"
 import { Context } from "../Context";
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
+// import Card from '@mui/material/Card';
+// import CardActions from '@mui/material/CardActions';
+// import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
+// import Container from '@mui/material/Container';
+// import Grid from '@mui/material/Grid';
 
 import TextField from '@mui/material/TextField';
 
-export default function SinkiSinsei() {
+import { Table, TableBody, TableCell, TableContainer, TableRow,  } from "@mui/material";
 
-  const {userID} = useContext(Context)
+
+interface RowData {
+  title: string;
+  date: string;
+  description: string;
+  kind: string;
+  shop: string;
+  amount: number;
+  flow_id: number;
+  selectUserID: number;
   
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
-  const [description, setDescription] = useState("");
-  const [kind, setKind] = useState("");
-  const [shop, setShop] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [flow_id, setFlow_id] = useState(0);
-
-  const registerSinsei = async () => {
-    // const res = await api.application.createApplication({title, date, description, user_id:userID, kind, shop, amount, flow_id})
-    const res = await api.application.createApplication({title, date, description, user_id: userID, kind, shop, amount, flow_id})
-    console.log(res.data)
-    // if (!res.data.date || !res.data.description) {
-    //   alert((res.error.message))
-    // }
-
-    alert("Title is " + res.data.title + " description is " + res.data.description)
 }
+
+export default function SinkiSinsei2() {
+
+  const {userID, setUserID} = useContext(Context)
+  
+  // const [title, setTitle] = useState("");
+  // const [date, setDate] = useState("");
+  // const [description, setDescription] = useState("");
+  // const [kind, setKind] = useState("");
+  const [shop, setShop] = useState("");
+  // const [amount, setAmount] = useState(0);
+  // const [flow_id, setFlow_id] = useState(0);
+
+  const [selectUserID, setSelectUserID] = useState(userID);
+
+  const [currentRowIndex, setCurrentRowIndex] = useState<number | null>(null);
+
+
+
+
+//   const registerSinsei = async () => {
+//     // const res = await api.application.createApplication({title, date, description, user_id:userID, kind, shop, amount, flow_id})
+//     const res = await api.application.createApplication({title, date, description, user_id: selectUserID, kind, shop, amount, flow_id})
+//     console.log(res.data)
+//     if (!res.data.date || !res.data.description) {
+//       alert((res.error.message))
+//     }
+
+//     alert("Title is " + res.data.title + " description is " + res.data.description)
+// }
 
 const [isModalOpen, setIsModalOpen] = useState(false);
 
-const openModal = () => {
+const openModal = (index: number) => {
+  setCurrentRowIndex(index);
+  setShop(rows[index].shop);
   setIsModalOpen(true);
 };
 
+
 const closeModal = () => {
+  if (currentRowIndex !== null) {
+    const updatedRows = [...rows];
+    updatedRows[currentRowIndex].shop = shop;
+    setRows(updatedRows);
+  }
   setIsModalOpen(false);
 };
 
 
-useEffect(() =>{
-  setSlectUserID(userID);
+const [rows, setRows] = useState<RowData[]>([
+  {
+    title: "",
+    date: "",
+    description: "",
+    kind: "",
+    shop: "",
+    amount: 0,
+    flow_id: 0,
+    selectUserID: userID,
+  },
+]);
+
+const addRow = () => {
+  setRows([
+    ...rows,
+    {
+      title: "",
+      date: "",
+      description: "",
+      kind: "",
+      shop: "",
+      amount: 0,
+      flow_id: 0,
+      selectUserID: userID,
+    },
+  ]);
+};
+
+const copyRow = (index: number) => {
+  const newRow = { ...rows[index] };
+  setRows([...rows, newRow]);
+};
+
+const deleteRow = (index: number) => {
+  setRows(rows.filter((_, i) => i !== index));
+};
+
+const handleInputChange = (
+  index: number,
+  field: keyof RowData,
+  value: string | number
+) => {
+  const updatedRows = [...rows];
+
+  if (field === "amount" || field === "flow_id") {
+    updatedRows[index][field] = Number(value);
+  } else {
+    // 動く
+    updatedRows[index][field] = String(value);
+  }
+
+  setRows(updatedRows);
+};
+
+const registerSinsei = async () => {
+  try {
+    for (const row of rows) {
+      const res = await api.application.createApplication({
+        title: row.title,
+        date: row.date,
+        description: row.description,
+        user_id: row.selectUserID,
+        kind: row.kind,
+        shop: row.shop,
+        amount: row.amount,
+        flow_id: row.flow_id,
+      });
+
+      if (!res.data.date || !res.data.description) {
+        alert(res.error.message);
+      } else {
+        alert(
+          "Title is " + res.data.title + " description is " + res.data.description
+        );
+      }
+    }
+  } catch (error) {
+    console.error("Error registering application:", error);
+    alert("Error registering application.");
+  }
+};
+
+useEffect(() => {
+  setSelectUserID(userID);
+
 }, [userID]);
 
 
@@ -56,136 +170,167 @@ useEffect(() =>{
 
   return (
       <>
-       <Card sx={{ minWidth: 275, borderRadius: '0' }}>  {/* ここで角を角ばらせる */}
-        <CardContent>
+      <Typography variant="h6">新規申請2</Typography>
+      <Box mb={4} />
+      <TableContainer>
+      <Table >
+        <TableBody >
+          {rows.map((row, index) => (
+            <TableRow key={index}>
+              <TableCell sx={{ padding: '5px' }}> {/* セル間の隙間を狭める */}
+                <TextField
+                  label="タイトル"
+                  value={row.title}
+                  onChange={(e) =>
+                    handleInputChange(index, "title", e.target.value)
+                  }
+                  variant="outlined"
+                  style={{ width: '150px' }} // 幅を指定
+                  
+                />
+              </TableCell>
+              <TableCell sx={{ padding: '5px' }}> 
+                <TextField
+                  label="日付"
+                  type="date"
+                  value={row.date}
+                  onChange={(e) =>
+                    handleInputChange(index, "date", e.target.value)
+                  }
+                  variant="outlined"
+                  fullWidth
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </TableCell>
+              <TableCell sx={{ padding: '5px' }}> 
+                <TextField
+                  label="詳細"
+                  value={row.description}
+                  onChange={(e) =>
+                    handleInputChange(index, "description", e.target.value)
+                  }
+                  variant="outlined"
+                  style={{ width: '150px' }} 
+                />
+              </TableCell>
+              <TableCell sx={{ padding: '5px' }}> 
+                <TextField
+                  label="科目"
+                  value={row.kind}
+                  onChange={(e) =>
+                    handleInputChange(index, "kind", e.target.value)
+                  }
+                  variant="outlined"
+                  style={{ width: '150px' }} 
+                />
+              </TableCell>
+              <TableCell sx={{ padding: '5px' }}> 
+                <TextField
+                  label="店舗"
+                  value={row.shop}
+                  onChange={(e) =>
+                    handleInputChange(index, "shop", e.target.value)
+                  }
+                  variant="outlined"
+                  style={{ width: '150px' }} 
+                />
+              </TableCell>
+              <TableCell sx={{ padding: '5px'}}>
+              <TableCell sx={{ padding: "5px" }}>
+                <Button onClick={() => openModal(index)}>マップ</Button>
+              </TableCell>
+              </TableCell>
+            
+              <TableCell sx={{ padding: '5px' }}> 
+                <TextField
+                  label="金額"
+                  type="number"
+                  value={row.amount}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    if (value >= 0) {
+                      handleInputChange(index, "amount", value);
+                    }
+                  }}
+                  variant="outlined"
+                  fullWidth
+                />
+              </TableCell>
+              <TableCell sx={{ padding: '5px' }}> 
+                <TextField
+                  label="Flow ID"
+                  type="number"
+                  value={row.flow_id}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    if (value >= 0) {
+                      handleInputChange(index, "flow_id", value);
+                    }
+                  }}
+                  variant="outlined"
+                  fullWidth
+                />
+              </TableCell>
+              <TableCell sx={{ padding: '5px' }}> 
+                {/* <TextField
+                  label="ユーザーID"
+                  value={row.selectUserID}
+                  onChange={(e) =>
+                    handleInputChange(index, "selectUserID", e.target.value)
+                  }
+                  variant="outlined"
+                  fullWidth
+                /> */}
+                <TextField
+                  label="ユーザーID"
+                  value={selectUserID}
+                  variant="outlined"
+                  fullWidth
+                  disabled
+                />
+                {/* <Typography variant="h6">{selectUserID}</Typography> */}
+              </TableCell>
+              <TableCell sx={{ padding: '5px' }}> 
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={() => copyRow(index)}
+                  size="small"
+                >
+                  コピー
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => deleteRow(index)}
+                  size="small"
+                >
+                  削除
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+    <Button
+      variant="outlined"
+      color="primary"
+      onClick={addRow}
+      style={{ marginTop: "10px" }}
+    >
+      行を追加
+    </Button>
+    <Button
+      variant="contained"
+      onClick={registerSinsei}
+      style={{ marginTop: "10px", marginLeft: "10px" }}
+    >
+      申請を登録
+    </Button>
 
-        <Container>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Typography variant="h6">新規申請</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="タイトル"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="日付"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            fullWidth
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="詳細"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="科目"
-            value={kind}
-            onChange={(e) => setKind(e.target.value)}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={10}>
-        <TextField
-          label="店舗"
-          value={shop}
-          onChange={(e) => setShop(e.target.value)}
-          fullWidth
-        />
-        </Grid>
-        <Grid item xs={2}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={openModal}
-            fullWidth
-          >
-            マップ
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="金額"
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="flow_id"
-            type="number"
-            value={flow_id}
-            onChange={(e) => setFlow_id(Number(e.target.value))}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="ユーザーID"
-            value={selectUserID}
-            onChange={(e) => setSlectUserID(Number(e.target.value))}
-            variant="outlined"
-            fullWidth
-            disabled
-          />
-        </Grid>
-        <Box mb={15} />
-      </Grid>
-      <Card>
-      <Box mt={2}>
-        <Typography variant="h6">入力内容</Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={2}><Typography>タイトル:</Typography></Grid>
-          <Grid item xs={4}><Typography>{title}</Typography></Grid>
-          <Grid item xs={2}><Typography>日付:</Typography></Grid>
-          <Grid item xs={4}><Typography>{date}</Typography></Grid>
-        </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={2}><Typography>詳細:</Typography></Grid>
-          <Grid item xs={4}><Typography>{description}</Typography></Grid>
-          <Grid item xs={2}><Typography>ユーザーID:</Typography></Grid>
-          <Grid item xs={4}><Typography>{userID}</Typography></Grid>
-        </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={2}><Typography>科目:</Typography></Grid>
-          <Grid item xs={4}><Typography>{kind}</Typography></Grid>
-          <Grid item xs={2}><Typography>店舗:</Typography></Grid>
-          <Grid item xs={4}><Typography>{shop}</Typography></Grid>
-        </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={2}><Typography>金額:</Typography></Grid>
-          <Grid item xs={4}><Typography>{amount}</Typography></Grid>
-          <Grid item xs={2}><Typography>flow_id:</Typography></Grid>
-          <Grid item xs={4}><Typography>{flow_id}</Typography></Grid>
-        </Grid>
-        <Box mb={2} />
-      </Box>
-      </Card>
-    </Container>
-    
-
-        </CardContent>
-        <CardActions sx={{ display: 'flex', justifyContent: 'center' }} >  {/* ここでボタンを右端に配置 */}
-          <Button  variant="outlined" onClick={registerSinsei}>作成</Button>
-        </CardActions>
-      </Card>
 
           {isModalOpen && (
             <div style={{
