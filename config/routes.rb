@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       get 'webhook', to: 'webhooks#index'
       get 'webhook/user/:user_id', to: 'webhooks#user'
       get 'webhook/entries', to: 'webhooks#entries'
+      delete 'webhook/:id', to: 'webhooks#destroy'
     end
   end
 end
