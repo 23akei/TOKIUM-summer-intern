@@ -73,6 +73,21 @@ export default function WebhookTouroku() {
     fetch()
   }
 
+  const deleteWebhook = async (id: number) => {
+    try {
+    const res = await api.webhook.deleteWebhook(id)
+    if (res.data) {
+      alert("deleted!")
+    }
+            
+    } catch (error) {
+      alert("error: see the console")
+      console.error(error)
+    }
+
+    fetch();
+  }
+  
   useEffect(() => {
     fetch()
   }, [userID])
@@ -108,6 +123,7 @@ export default function WebhookTouroku() {
         <div style={{padding: "10px"}}>
           <div>{webhook.entry}</div>
           <div>{webhook.url}</div>
+          <button onClick={() => deleteWebhook(webhook.id)}>削除</button>
         </div>
       ))}
     </div>
