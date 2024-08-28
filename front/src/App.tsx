@@ -11,6 +11,7 @@ import Syounin from './pages/syounin.tsx'
 import UserItiran from './pages/user-itiran.tsx'
 import SyouninHuroItiran from './pages/syounin-huro-itiran.tsx'
 import AppBar from './components/app-bar.tsx'
+import SWOpenAPI from './pages/doc.tsx'
 
 
 function App() {
@@ -52,6 +53,8 @@ function App() {
         </Route>
 
         <Route path='/user-itiran' element={<UserItiran/>} />
+
+        <Route path='/doc' element={<SWOpenAPI></SWOpenAPI>}></Route>
 
       </Routes>
 
