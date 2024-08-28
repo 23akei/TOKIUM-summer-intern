@@ -42,7 +42,7 @@ class SubmittionService
 
       # if the present step is not found, the flow is ended with success
       if present_flow.nil?
-        submittion.status = 'success'
+        submittion.status = 'approve'
         break
       end
 
@@ -83,6 +83,13 @@ class SubmittionService
       submittion.status = 'approve'
     end
     submittion.save
+
+    # fire the hook
+    if submittion.status == 'approve'
+      webhook_service = WebhookService.new
+      webhook_service.fire_event(WebhookEntry::ENTRY[:submittion], submittion.user_id)
+    end
+
     return {id: submittion.id}, :ok
   end
 
@@ -151,6 +158,10 @@ class SubmittionService
         )
         new_approval.save
         approval = new_approval
+
+        # fire the hook
+        webhook_service = WebhookService.new
+        webhook_service.fire_event(WebhookEntry::ENTRY[:approve], approval.approved_user_id)
       end
 
       result &&= (approval.status == 'approve')
