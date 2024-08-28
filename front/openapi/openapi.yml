@@ -575,6 +575,124 @@ paths:
                 properties:
                   message:
                     type: string
+  /webhook:
+    post:
+      summary: Webhookを作成
+      tags:
+        - Webhook
+      operationId: updateWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: number
+                url:
+                  type: string
+                entry:
+                  $ref: '#/components/schemas/WebhookEntry'
+      responses:
+        '201':
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    get:
+      summary: すべてのwebhookを取得
+      tags:
+        - Webhook
+      operationId: getWebhooks
+      responses:
+        '200':
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /webhook/user/{userId}:
+    get:
+      summary: userの登録したすべてのwebhookを取得
+      tags:
+        - Webhook
+      operationId: getWebhooksByUserId
+      responses:
+        '200':
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /webhook/entries:
+    get:
+      summary: すべてのWebhookEntryを取得
+      tags:
+        - Webhook
+      operationId: getWebhookEntries
+      responses:
+        '200':
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookEntry'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+
 components:
   schemas:
     CreateUser:
@@ -761,3 +879,19 @@ components:
           type: string
         step:
           type: integer
+    WebhookEntry:
+      description: いつhookをよぶか("submittion", "approval")
+      type: string
+
+    Webhook:
+      description: webhook
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: number
+        url:
+          type: string
+        entry:
+          $ref: '#/components/schemas/WebhookEntry'
