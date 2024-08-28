@@ -51,7 +51,7 @@ module Api
       def entries
         begin
           entries = Webhookentry::ENTRY.keys
-          render json: [entries], status: :ok
+          render json: entries, status: :ok
         rescue => e
           render json: { error: e.message }, status: :internal_server_error
         end
