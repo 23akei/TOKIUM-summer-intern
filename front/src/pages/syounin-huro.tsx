@@ -1,238 +1,226 @@
-import React, { useState, useEffect } from "react"
+import {useState, useEffect} from "react"
 import { api } from "../const"
-import { User } from "../../openapi/api";
-// import { Condition } from "../../openapi/api";
+import { CreateApprovers, CreateCondition, User } from "../../openapi/api";
 import { CreateFlow } from "../../openapi/api";
-// import { Flow } from "../../openapi/api";
-
-// key=項目, value=閾値, condition=不等号,
 const conditionLabels: Record<string, string> = {
-    "eq": "=",
-    "neq": "!=",
-    "lt": "<",
-    "le": "<=",
-    "gt": ">",
-    "ge": ">="
+  "eq": "=",
+  "neq": "!=",
+  "lt": "<",
+  "le": "<=",
+  "gt": ">",
+  "ge": ">="
 };
 
+//TERMINOLOGY
+//createFlow: 
+//flow: property of createFlow. list of (createCondition | createApprovers).
+//f: (createCondition|createApprovers). element of flow
+//createCondition: 
+//condition: propety of createCondition
+
 export default function SyouninHuro() {
-
-    const [title, setTitle] = useState<string>("");
-
-    const [conditionKeys, setConditionKeys] = useState<string[]>([]);
-    const [comparators, setComparators] = useState<string[]>([]);
-
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([""]);
-    const [selectedComps, setSelectedComps] = useState<string[]>([""]);
-    const [selectedValues, setSelectedValues] = useState<string[]>([""]);
-
-    // const [userID, setuserID] = useState<number | undefined>();
-    const [users, setUsers] = useState<User[]>([]);
-    const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-
-    const [flow, setFlow] = useState<CreateFlow | undefined>()
-    // const [condition, setCondition] = useState<Condition | undefined>()
-
-  const fetchFlows = async () => {
+  //材料
+  const [conditionKeys, setConditionKeys] = useState<string[]>([]); //比較対象　amountなど
+  const [comparators, setComparators] = useState<string[]>([]);//<, =, >, >=
+  const [users, setUsers] = useState<User[]>([]);
+  
+  //送信するやつ
+  const [createFlow, setCreateFlow] = useState<CreateFlow>({name:"", flow:[]})
+  
+  const fetch = async () => {
     try {
       const res0 = await api.flows.getConditions()
       const res1 = await api.flows.getComparators()
       const res2 = await api.users.getUsers()
-
       setConditionKeys(res0.data.key || []);
       setComparators(res1.data.comparators || []);
       setUsers(res2.data || [])
     } catch (error) {
-      console.error('Error fetching flows:', error);
+      alert('Error fetching flows:'+ error);
     }
   };
 
+  const makeEmptyCreateCondition = (): CreateCondition => {
+    return {
+      condition: {
+        key: ""
+      }
+    }
+  }
+  const makeEmptyCreateApprovers = (): CreateApprovers => {
+    return {
+      approvers: []
+    }
+  }
+  const deleteIthF = (i: number) => {
+    createFlow.flow?.splice(i, 1)
+    setCreateFlow({...createFlow})
+  }
 
+  const getUserByID = (id: number): User => {
+    const user = users.find(user => user.id == id)
+    return user as User
+  }
+  const addApprover = (event: React.ChangeEvent<HTMLSelectElement>, approvers: User[]) => {
+    const user_id = parseInt(event.target.value);
+
+    approvers.push(getUserByID(user_id))
+    setCreateFlow({...createFlow})
+  };
+  const setConditionKey = (key: string, condition:CreateCondition["condition"]) => {
+    if (condition) {
+      condition.key = key
+    }
+    setCreateFlow({...createFlow})
+  }
+  const setConditionComparator = (comparator: string, condition: CreateCondition["condition"]) => {
+    if (condition) {
+      condition.condition = comparator
+    }
+    setCreateFlow({...createFlow})
+  }
+  const setConditionValue = (value: string, condition: CreateCondition["condition"]) => {
+    if (condition) {
+      condition.value = value
+    }
+    setCreateFlow({...createFlow})
+  }
+  const isCreateFlowValid = () => {
+    if (!createFlow.flow || createFlow.flow.length==0) {
+      alert("flowがないお")
+      return false
+    }
+
+    if (!createFlow.name) {
+      alert("nameがないよ")
+      return false
+    }
+
+    for (let i = 0; i<createFlow.flow.length; i++) {
+      const f = createFlow.flow[i]
+      if ("condition" in f) {
+        const condition = f.condition
+        if (!condition?.key || !condition.condition || !condition.value) {
+          alert("条件をすべてうめて")
+          return false
+        }
+      } else {
+        const approvers = (f as CreateApprovers).approvers
+        if (!approvers || approvers.length == 0) {
+          alert("承認者を１人以上選択して")
+          return false
+        }
+      }
+    }
+
+    return true
+  }
+  const registerCreateFlow = async () => {
+    if (!isCreateFlowValid()) return
+
+    try {
+
+      const res = await api.flows.createFlow(createFlow)
+      if (res.ok) {
+        alert("Flow created: " + createFlow.name)
+      } else {
+        alert("Failed to create flow: " + res.data)
+      }
+    } catch (error) {
+      alert("error: see the console")
+      console.error(error)
+    }
+  }
   
-    useEffect(() => {
-        fetchFlows();
-    }, []);
+  useEffect(() => {
+    fetch();
+  }, []);
+  
+  return (
+    <>
+    <div>
+      <div>
+      <span>名前 </span>
+      <input value={createFlow.name} onChange={(e) => {
+        createFlow.name = e.target.value
+        setCreateFlow({...createFlow})
+      }} />
+      </div>
 
-    const registerFlows = async () => {
-        // console.log("init of registerFlows");
-        console.log(selectedUsers)
-        if (selectedUsers.length === 0) {
-            alert("承認者を1人以上選択してください。");
-            return; // 処理を中断
-        }
-        if (!title){
-            alert("タイトルを入力してください。");
-            return;
-        }
-        for (let i = 0; i < selectedKeys.length; i++) {
-            const key = selectedKeys[i];
-            const condition = selectedComps[i];
-            const value = selectedValues[i];
+      <div>
+        {createFlow.flow && createFlow.flow.map((f, fIndex) => {
 
-            if (!key || !condition || !value  || !title ) {
-                alert(`条件のすべてのフィールドを入力してください。`);
-                return;  
-            } 
-
-        }
-
-
-        const flowConditions = selectedKeys.map((key, index) => ({
-            key: key,
-            condition: selectedComps[index],
-            value: selectedValues[index],
-        }));
-
-        const create_flow: CreateFlow = {
-            name: title,
-            flow: [
-                ...flowConditions.map(condition => ({ condition })),
-                {
-                    approvers: selectedUsers,
-                },
-            ],
-        };
-
-        setFlow(create_flow);
-
-        try {
-            
-            const response = await api.flows.createFlow(create_flow);
-            if (response.ok) {
-                alert("Flow created: " + '"' + create_flow.name + '"');
-            } else {
-                alert("Failed to create flow: " + response.data);
-            }
-        } catch (error) {
-            console.error("Failed to create flow:", error);
-        }
-    };
-
-    const handleChange0 = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTitle(event.target.value);
-    };
-
-    const handleKeyChange = (index: number, value: string) => {
-        const newSelectedKeys = [...selectedKeys];
-        newSelectedKeys[index] = value;
-        setSelectedKeys(newSelectedKeys);
-    };
-
-    const handleCompChange = (index: number, value: string) => {
-        const newSelectedComps = [...selectedComps];
-        newSelectedComps[index] = value;
-        setSelectedComps(newSelectedComps);
-    };
-
-    const handleValueChange = (index: number, value: string) => {
-        const newSelectedValues = [...selectedValues];
-        newSelectedValues[index] = value;
-        setSelectedValues(newSelectedValues);
-    };
-
-    const addCondition = () => {
-        setSelectedKeys([...selectedKeys, ""]);
-        setSelectedComps([...selectedComps, ""]);
-        setSelectedValues([...selectedValues, ""]);
-    };
-
-    const removeCondition = (index: number) => {
-        const newSelectedKeys = [...selectedKeys];
-        const newSelectedComps = [...selectedComps];
-        const newSelectedValues = [...selectedValues];
-
-        newSelectedKeys.splice(index, 1);
-        newSelectedComps.splice(index, 1);
-        newSelectedValues.splice(index, 1);
-
-        setSelectedKeys(newSelectedKeys);
-        setSelectedComps(newSelectedComps);
-        setSelectedValues(newSelectedValues);
-    };
-
-    const UserSearch = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedUserId = parseInt(event.target.value);
-        const user = users.find(user => user.id === selectedUserId);
-        if (user && !selectedUsers.includes(user)) {
-            setSelectedUsers([...selectedUsers, user]);
-        }
-    };
-
-    const removeApprover = (userId: number) => {
-        setSelectedUsers(selectedUsers.filter(user => user.id !== userId));
-    };
-
-    // ログ
-    useEffect(() => {
-        if (flow) {
-            console.log("Updated flow:", flow);
-        }
-    }, [flow]);
-
-    return (
-        <>
-            <div>
-                <p>承認フロー</p>
-                <p>タイトル</p>
-                <input value={title} onChange={handleChange0}></input>
-                <p>条件選択</p>
-
-                {selectedKeys.map((_, index) => (
-                    <div key={index}>
-                        <select value={selectedKeys[index]} onChange={(e) => handleKeyChange(index, e.target.value)}>
-                            <option value="">--選択--</option>
-                            {conditionKeys.map((ke) => (
-                                <option key={ke} value={ke}>{ke}</option>
-                            ))}
-                        </select>
-
-                        <select value={selectedComps[index]} onChange={(e) => handleCompChange(index, e.target.value)}>
-                            <option value="">--選択--</option>
-                            {comparators.map((comp) => (
-                                <option key={comp} value={comp}>
-                                    {conditionLabels[comp]}
-                                </option>
-                            ))}
-                        </select>
-
-                        <input
-                            type="text"
-                            value={selectedValues[index]}
-                            onChange={(e) => handleValueChange(index, e.target.value)}
-                            placeholder="Enter text"
-                        />
-                        <button onClick={() => removeCondition(index)}>削除</button>
-                    </div>
+          ///////条件
+          if ("condition" in f) {
+            const createCondition = f as CreateCondition;
+            return <div>
+              <p>条件</p>
+              <select value={createCondition.condition?.key} onChange={(e) => setConditionKey(e.target.value, createCondition.condition)}>
+                <option value="">--選択--</option>
+                {conditionKeys.map((ke) => (
+                  <option key={ke} value={ke}>{ke}</option>
                 ))}
-
-                <button onClick={addCondition}>条件を追加</button>
-
-                <p>承認者</p>
-                <select onChange={UserSearch}>
-                    <option value="">--選択--</option>
-                    {users.map((user) => (
-                        <option key={user.id} value={user.id}>{user.id}: {user.name}</option>
-                    ))}
-                </select>
-
-                <ul style={{ listStyleType: 'none' }}>
-                    {selectedUsers.map((user, index) => {
-                        if (user.id === undefined) {
-                            return null; 
-                        }
-
-                        const orderLabel = `${index + 1}人目`;
-
-                        return (
-                            <li key={user.id}>
-                                {orderLabel}: {user.name} <button onClick={() => removeApprover(user.id!)}>削除</button>
-                            </li>
-                        );
-                    })}
-                </ul>
-
-                <button onClick={registerFlows}>保存</button>
+              </select>
+              <select value={createCondition.condition?.condition} onChange={(e) => setConditionComparator(e.target.value, createCondition.condition)}>
+                <option value="">--選択--</option>
+                {comparators.map((comp) => (
+                    <option key={comp} value={comp}>
+                        {conditionLabels[comp]}
+                    </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                value={createCondition.condition?.value}
+                onChange={(e) => setConditionValue(e.target.value, createCondition.condition)}
+                placeholder="Enter text"
+              />
+              <button onClick={(e) => {
+                deleteIthF(fIndex)
+              }}>削除</button>
             </div>
-        </>
-    )
+          }
+          //////////////
+
+          ///////承認者リスト
+          const createApprovers = f as CreateApprovers;
+          return <div>
+            <p>承認者リスト</p>
+            <div>
+            <select onChange={(e) => {addApprover(e, createApprovers.approvers as User[])}}>
+              <option value="">--選択--</option>
+                {users.map((user) => (
+                    <option key={user.id} value={user.id}>{user.id}: {user.name}</option>
+                ))}
+            </select>
+            </div>
+            <div>
+              {createApprovers.approvers?.map(approver => (
+                <div>{approver.id}:{approver.name}</div>
+              ))}
+            </div>
+            <button onClick={(e) => {
+                deleteIthF(fIndex)
+            }}>削除</button>
+          </div>
+          //////////////
+        })}
+      </div>
+
+      <div style={{marginTop:"50px"}}>
+        <button onClick={(e) => {
+          createFlow.flow?.push(makeEmptyCreateCondition())
+          setCreateFlow({...createFlow})
+        }}>条件を追加</button>
+        <button onClick={(e) => {
+          createFlow.flow?.push(makeEmptyCreateApprovers())
+          setCreateFlow({...createFlow})
+        }}>承認者リストを追加</button>
+      </div>
+      <button onClick={registerCreateFlow}>
+        作成
+      </button>
+    </div>
+    </>
+  ) 
 }
