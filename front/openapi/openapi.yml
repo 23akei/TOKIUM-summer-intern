@@ -674,6 +674,38 @@ paths:
                 properties:
                   message:
                     type: string
+  /webhook/{webhookId}:
+    delete:
+      summary: webhookを削除
+      tags:
+        - Webhook
+      operationId: deleteWebhook
+      parameters:
+        - name: webhookId
+          in: path
+          required: true
+          description: ID of the webhook to delete
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /webhook/entries:
     get:
       summary: すべてのWebhookEntryを取得
