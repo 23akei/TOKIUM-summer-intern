@@ -580,7 +580,7 @@ paths:
       summary: Webhookを作成
       tags:
         - Webhook
-      operationId: updateWebhook
+      operationId: createWebhook
       requestBody:
         required: true
         content:

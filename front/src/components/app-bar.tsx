@@ -80,6 +80,7 @@ export default function CustomAppBar() {
     { "link": "/syounin-huro-itiran", "label": "承認フロー一覧"},
     { "link": "/user-itiran", "label": "ユーザー一覧" },
     { "link": "/doc", "label": "API"},
+    { "link": "/webhook-touroku", "label": "Webhook登録" },
   ];
 
   return (
