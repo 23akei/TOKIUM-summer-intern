@@ -1,8 +1,26 @@
-import { useEffect, useState, useContext } from "react"
-import {api} from "../const"
+import { useEffect, useState, useContext } from "react";
+import {
+  Table, TableHead, TableBody, TableRow, TableCell, Checkbox, Button,
+  Paper, TableContainer, Typography, Box, Snackbar, Alert
+} from '@mui/material';
+import { api } from "../const";
 import { Approval, Application } from "../../openapi/api";
-import { Context } from '../Context.tsx'
-import Kensaku from "../components/kensaku"
+import { Context } from '../Context.tsx';
+import Kensaku from "../components/kensaku";
+import Modal from '@mui/material/Modal';
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 1200,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 2,
+};
+
 
 export interface ApprovalAndApplication {
   approval: Approval,
@@ -15,6 +33,27 @@ export default function Syounin() {
   const [approvals, setApprovals] = useState<ApprovalAndApplication[]>([]);
   const [kensakuApprovals, setKensakuApprovals] = useState<ApprovalAndApplication[]|null>(null)
   const [selectedApprovals, setSelectedApprovals] = useState<ApprovalAndApplication[]>([])
+
+  const[open, setOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [message, setMessage] = useState('');
+
+  const [open_pop, setOpen_pop] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+    setCurrentIndex(0); // モーダルを開いたときに最初の項目を表示する
+  };
+  const handleClose = () => setOpen(false);
+
+  const handleClose_popup = () => {
+    setOpen_pop(false);
+  };
+
+
+
+
 
   useEffect(()=>{
     getApprovalsByUserID();
@@ -115,6 +154,8 @@ export default function Syounin() {
     }
     return false
   }
+
+
   
   const approvalsList = (apprs: ApprovalAndApplication[]) => {
     return (
@@ -122,28 +163,33 @@ export default function Syounin() {
       {apprs.length > 0 &&
         apprs.map(appr => (
           <>
-            <tr>
-            <td><input type="checkbox"
-          checked={isSelected(appr)}
-          onChange={(e)=>{ onSelectApproval(e.target.checked, appr)}}
-          key={appr.approval.id}
-            /></td>
-            <td>{appr.approval.status}</td>
-            <td>{appr.approval.approved_user_id}</td>
-            <td>{appr.application?.id}</td>
-            <td>{appr.application?.flow_id}</td>
-            <td>{appr.application?.title}</td>
-            <td>{appr.application?.kind}</td>
-            <td>{appr.application?.shop}</td>
-            <td>{appr.application?.amount}</td>
-            <td>{appr.application?.date}</td>
-            <td>
-            <div style={{ display: "flex", alignItems: "center" }}>
-            <button onClick={() => setStatus(appr.approval, "approve")}>承認</button>
-            <button onClick={() => setStatus(appr.approval, "reject")}>却下</button>
-            </div>
-            </td>
-            </tr>
+            <TableRow key={appr.approval.id}>
+              <TableCell>
+                <Checkbox
+                  checked={isSelected(appr)}
+                  onChange={(e) => onSelectApproval(e.target.checked, appr)}
+                />
+              </TableCell>
+              <TableCell>{appr.approval.status}</TableCell>
+              <TableCell>{appr.approval.approved_user_id}</TableCell>
+              <TableCell>{appr.application?.id}</TableCell>
+              <TableCell>{appr.application?.flow_id}</TableCell>
+              <TableCell>{appr.application?.title}</TableCell>
+              <TableCell>{appr.application?.kind}</TableCell>
+              <TableCell>{appr.application?.shop}</TableCell>
+              <TableCell>{appr.application?.amount}</TableCell>
+              <TableCell>{appr.application?.date}</TableCell>
+              <TableCell>
+                <Box display="flex" alignItems="center">
+                  <Button sx={{marginRight: 1}} variant="contained" color="primary" onClick={() => setStatus(appr.approval, "approve")}>
+                    承認
+                  </Button>
+                  <Button variant="contained" color="secondary" onClick={() => setStatus(appr.approval, "reject")}>
+                    却下
+                  </Button>
+                </Box>
+              </TableCell>
+            </TableRow>
             </>
 
         )
@@ -154,42 +200,216 @@ export default function Syounin() {
     )
   }
 
+
+  const modal_approvalsList = (apprs: ApprovalAndApplication[]) => {
+    return (
+      <>
+      {apprs.length > 0 &&
+        apprs.map(appr => (
+          <>
+            <TableRow key={appr.approval.id}>
+              <TableCell>{appr.approval.status}</TableCell>
+              <TableCell>{appr.approval.approved_user_id}</TableCell>
+              <TableCell>{appr.application?.id}</TableCell>
+              <TableCell>{appr.application?.flow_id}</TableCell>
+              <TableCell>{appr.application?.title}</TableCell>
+              <TableCell>{appr.application?.kind}</TableCell>
+              <TableCell>{appr.application?.shop}</TableCell>
+              <TableCell>{appr.application?.amount}</TableCell>
+              <TableCell>{appr.application?.date}</TableCell>
+            </TableRow>
+            </>
+        )
+        )
+      }
+      </>
+    )
+  }
+
   const checkEmpty = (apprs: ApprovalAndApplication[]) => (
     <>
       {apprs.length <= 0 && <p>承認するものなし</p>}
     </>
   )
 
+
+
+  const currentApproval = (apprs: ApprovalAndApplication[]) => {
+    if (apprs.length === 0) return null;
+    return apprs[currentIndex];
+  };
+
+  const modal_setStatus = async (appr: Approval, status: string) => {
+    appr.status = status
+    const res = await api.approvals.updateApproval(appr)
+    if (res.data.id != undefined) {
+      getApprovalsByUserID();
+      setMessage("updated approval " + res.data.id)
+      setOpen_pop(true);
+      setTimeout(() => {
+        setOpen_pop(false);
+      }, 3000); // ポップアップが表示される時間（ミリ秒）
+    } else {
+      alert(res.error.message)
+    }
+  }
+
+  const modal_approve = () =>{
+    const app = currentApproval(kensakuApprovals == null ? approvals : kensakuApprovals);
+    if(app !== null){
+      modal_setStatus(app.approval, "approve")
+    }
+  }
+
+  const modal_reject = () =>{
+    const app = currentApproval(kensakuApprovals == null ? approvals : kensakuApprovals);
+    if(app !== null){
+      modal_setStatus(app.approval, "reject")
+    }
+  }
+
+  const handleSkip = () => {
+    setCurrentIndex(prevIndex => {
+      const nextIndex = prevIndex + 1;
+      if (nextIndex >= (kensakuApprovals || approvals).length) {
+        return 0; 
+      }
+      return nextIndex;
+    });
+  };
+
+
+  const handleRevers =() =>{
+    setCurrentIndex(prevIndex => {
+      const nextIndex = prevIndex - 1;
+      if (nextIndex <= 0) {
+        return ((kensakuApprovals || approvals).length) - 1;
+      }
+      return nextIndex;
+    });
+  };
+
+
+
+
   return (
     <>
-      <Kensaku approvals={approvals} setKensakuApprovals={setKensakuApprovals} unselectAll={unselectAll}/>
-      {kensakuApprovals!=null && (<p>{kensakuApprovals.length}件ヒット</p>)}
-      <button onClick={selectAll}>すべて選択</button>
-      <button onClick={unselectAll}>選択解除</button>
-      <button onClick={() => setStatusForSelected("approve")}>まとめて承認</button>
-      <button onClick={() => setStatusForSelected("reject")}>まとめて却下</button>
-      <div style={{display: "flex", justifyContent: "center"}}>
-      <table border={1} cellPadding={5} >
-      <thead>
-      <tr>
-      <th></th>
-      <th>Status</th>
-      <th>from user id</th>
-      <th>Shinsei ID</th>
-      <th>Flow ID</th>
-      <th>Title</th>
-      <th>Kind</th>
-      <th>Shop</th>
-      <th>Amount</th>
-      <th>Date</th>
-      </tr>
-      </thead>
-      <tbody>      
-      {approvalsList(kensakuApprovals==null?approvals:kensakuApprovals)}
-    </tbody>
-      </table>
-      </div>
-      {checkEmpty(kensakuApprovals==null?approvals:kensakuApprovals)}
+      <Kensaku approvals={approvals} setKensakuApprovals={setKensakuApprovals} unselectAll={unselectAll} />
+      {kensakuApprovals != null && (
+        <Typography variant="body2">{kensakuApprovals.length}件ヒット</Typography>
+      )}
+      <Button sx={{ margin: 1}} variant="outlined" onClick={selectAll}>すべて選択</Button>
+      <Button sx={{ margin: 1}}variant="outlined" onClick={unselectAll}>選択解除</Button>
+      <Button sx={{ margin: 1}}variant="contained" color="primary" onClick={() => setStatusForSelected("approve")}>
+        まとめて承認
+      </Button>
+      <Button sx={{ margin: 1}}variant="contained" color="secondary" onClick={() => setStatusForSelected("reject")}>
+        まとめて却下
+      </Button>
+      <Button 
+        sx={{ 
+          marginLeft: 10, 
+          backgroundColor: '#00a152', 
+          color: 'white',
+          '&:hover': {
+            backgroundColor: '#007a40', // ホバー時の色を設定
+          },
+        }} 
+        variant="contained"
+        onClick={handleOpen}
+      >
+        連続承認
+      </Button>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>from user id</TableCell>
+              <TableCell>Shinsei ID</TableCell>
+              <TableCell>Flow ID</TableCell>
+              <TableCell>Title</TableCell>
+              <TableCell>Kind</TableCell>
+              <TableCell>Shop</TableCell>
+              <TableCell>Amount</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {approvalsList(kensakuApprovals == null ? approvals : kensakuApprovals)}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {checkEmpty(kensakuApprovals == null ? approvals : kensakuApprovals)}
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+              <Typography id="modal-modal-title" variant="h6" component="h2" align="center">
+                承認の連続処理
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+              <Button 
+                sx={{ backgroundColor: '#ff9100', color: 'white', '&:hover': { backgroundColor: '#b26500' } }} 
+                variant="contained" 
+                color="secondary" 
+                onClick={handleRevers}
+              >
+                戻る
+              </Button>
+              <Button 
+                sx={{ backgroundColor: '#ff9100', color: 'white', '&:hover': { backgroundColor: '#b26500' } }} 
+                variant="contained" 
+                color="secondary" 
+                onClick={handleSkip}
+              >
+                次へ
+              </Button>
+            </Box>
+          </Box>
+          {currentApproval(kensakuApprovals == null ? approvals : kensakuApprovals) && (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Status</TableCell>
+                    <TableCell>from user id</TableCell>
+                    <TableCell>Shinsei ID</TableCell>
+                    <TableCell>Flow ID</TableCell>
+                    <TableCell>Title</TableCell>
+                    <TableCell>Kind</TableCell>
+                    <TableCell>Shop</TableCell>
+                    <TableCell>Amount</TableCell>
+                    <TableCell>Date</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {modal_approvalsList([currentApproval(kensakuApprovals == null ? approvals : kensakuApprovals)])}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', }}>
+            <Button sx={{ margin: 2}} variant="contained" color="primary" onClick={modal_approve} >承認</Button>
+            <Button sx={{ margin: 2}} variant="contained" color="secondary" onClick={modal_reject}>却下</Button>
+            </Box>
+        </Box>
+      </Modal>
+
+      <Snackbar open={open_pop} autoHideDuration={3000} onClose={handleClose_popup}>
+        <Alert onClose={handleClose_popup} severity="info">
+          {message}
+        </Alert>
+      </Snackbar>
     </>
   )
 }
