@@ -19,7 +19,7 @@ export default function SyouninHuro() {
 
     const [title, setTitle] = useState<string>("");
 
-    const [key, setKey] = useState<string[]>([]);
+    const [conditionKeys, setConditionKeys] = useState<string[]>([]);
     const [comparators, setComparators] = useState<string[]>([]);
 
     const [selectedKeys, setSelectedKeys] = useState<string[]>([""]);
@@ -33,21 +33,23 @@ export default function SyouninHuro() {
     const [flow, setFlow] = useState<CreateFlow | undefined>()
     // const [condition, setCondition] = useState<Condition | undefined>()
 
+  const fetchFlows = async () => {
+    try {
+      const res0 = await api.flows.getConditions()
+      const res1 = await api.flows.getComparators()
+      const res2 = await api.users.getUsers()
+
+      setConditionKeys(res0.data.key || []);
+      setComparators(res1.data.comparators || []);
+      setUsers(res2.data || [])
+    } catch (error) {
+      console.error('Error fetching flows:', error);
+    }
+  };
+
+
+  
     useEffect(() => {
-        const fetchFlows = async () => {
-            try {
-                const res0 = await api.flows.getConditions()
-                const res1 = await api.flows.getComparators()
-                const res2 = await api.users.getUsers()
-
-                setKey(res0.data.key || []);
-                setComparators(res1.data.comparators || []);
-                setUsers(res2.data || [])
-            } catch (error) {
-                console.error('Error fetching flows:', error);
-            }
-        };
-
         fetchFlows();
     }, []);
 
@@ -179,7 +181,7 @@ export default function SyouninHuro() {
                     <div key={index}>
                         <select value={selectedKeys[index]} onChange={(e) => handleKeyChange(index, e.target.value)}>
                             <option value="">--選択--</option>
-                            {key.map((ke) => (
+                            {conditionKeys.map((ke) => (
                                 <option key={ke} value={ke}>{ke}</option>
                             ))}
                         </select>
