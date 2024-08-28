@@ -3,7 +3,6 @@ import './App.css'
 import Header from './components/header.tsx'
 import SinkiUserSakusei from './pages/sinki-user-sakusei.tsx'
 import SinkiSinsei from './pages/sinki-sinsei.tsx'
-import SinkiSinsei2 from './pages/sinki-sinsei2.tsx'
 import SyoninHuro from './pages/syounin-huro.tsx'
 import SinseiTeishutsu from './pages/sinsei-teishutsu.tsx'
 import { Context } from './Context.tsx'
@@ -74,9 +73,6 @@ function App() {
         </Route>
 
         <Route path='/sinki-sinsei' element={<SinkiSinsei></SinkiSinsei>}>
-        </Route>
-
-        <Route path='/sinki-sinsei2' element={<SinkiSinsei2></SinkiSinsei2>}>
         </Route>
 
         <Route path='/sinsei-teishutsu' element={<SinseiTeishutsu/>}>

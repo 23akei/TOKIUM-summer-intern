@@ -74,7 +74,6 @@ export default function CustomAppBar() {
     { "link": "/", "label": "Home" },
     { "link": "/sinki-user-sakusei", "label": "新規ユーザー作成" },
     { "link": "/sinki-sinsei", "label": "新規申請" },
-    { "link": "/sinki-sinsei2", "label": "新規申請2" },
     { "link": "/sinsei-teishutsu", "label": "申請提出" },
     { "link": "/syounin", "label": "承認" },
     { "link": "/syounin-huro", "label": "承認フロー" },
