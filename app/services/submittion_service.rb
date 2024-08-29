@@ -87,7 +87,7 @@ class SubmittionService
     # fire the hook
     if submittion.status == 'approve'
       webhook_service = WebhookService.new
-      webhook_service.fire_event(Webhookentry::ENTRY[:submittion], submittion.user_id)
+      webhook_service.fire_event(Webhookentry::ENTRY[:submittion], submittion.user_id, submittion)
     end
 
     return {id: submittion.id}, :ok
@@ -161,7 +161,7 @@ class SubmittionService
 
         # fire the hook
         webhook_service = WebhookService.new
-        webhook_service.fire_event(Webhookentry::ENTRY[:approval], approval.approved_user_id)
+        webhook_service.fire_event(Webhookentry::ENTRY[:approval], approval.approved_user_id, approval)
       end
 
       result &&= (approval.status == 'approve')
