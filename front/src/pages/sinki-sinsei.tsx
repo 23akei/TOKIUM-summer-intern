@@ -1,4 +1,5 @@
 import {api} from "../const"
+import { Flow } from "../../openapi/api";
 import { useState, useContext, useEffect } from "react"
 import { Context } from "../Context";
 import GMap from '../components/map.tsx'
@@ -9,7 +10,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 
-import { Table, TableBody, TableCell, TableContainer, TableRow,  } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableRow, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 
 
 interface RowData {
@@ -33,6 +34,24 @@ export default function SinkiSinsei() {
   const [selectUserID, setSelectUserID] = useState(userID);
   const [currentRowIndex, setCurrentRowIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [flows, setFlows] = useState<Flow[]>([]);
+
+
+
+  const fetchFlows = async () => {
+    try {
+      const res0 = await api.flows.getFlows();
+      setFlows(res0.data || []);
+    } catch (error) {
+      console.error('Error fetching flows:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFlows();
+  }, [userID]);
+
 
 const openModal = (index: number) => {
   setCurrentRowIndex(index);
@@ -176,7 +195,7 @@ useEffect(() => {
         <TableBody >
           {rows.map((row, index) => (
             <TableRow key={index}>
-              <TableCell sx={{ padding: '5px' }}> {/* セル間の隙間を狭める */}
+              <TableCell sx={{ padding: '1px' }}> {/* セル間の隙間を狭める */}
                 <TextField
                   label="タイトル"
                   value={row.title}
@@ -188,7 +207,7 @@ useEffect(() => {
 
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}>
+              <TableCell sx={{ padding: '1px' }}>
                 <TextField
                   label="日付"
                   type="date"
@@ -203,7 +222,7 @@ useEffect(() => {
                   }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}>
+              <TableCell sx={{ padding: '1px' }}>
                 <TextField
                   label="詳細"
                   value={row.description}
@@ -214,7 +233,7 @@ useEffect(() => {
                   style={{ width: '150px' }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}>
+              <TableCell sx={{ padding: '1px' }}>
                 <TextField
                   label="科目"
                   value={row.kind}
@@ -225,7 +244,7 @@ useEffect(() => {
                   style={{ width: '150px' }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}>
+              <TableCell sx={{ padding: '1px' }}>
                 <TextField
                   label="店舗"
                   value={row.shop}
@@ -236,13 +255,13 @@ useEffect(() => {
                   style={{ width: '150px' }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px'}}>
-              <TableCell sx={{ padding: "5px" }}>
+              <TableCell sx={{ padding: '3px'}}>
+              <TableCell sx={{ padding: "3px" }}>
                 <Button onClick={() => openModal(index)}>マップ</Button>
               </TableCell>
               </TableCell>
 
-              <TableCell sx={{ padding: '5px' }}>
+              <TableCell sx={{ padding: '1px' }}>
                 <TextField
                   label="金額"
                   type="number"
@@ -255,12 +274,14 @@ useEffect(() => {
                   }}
                   variant="outlined"
                   fullWidth
+                  style={{ width: '130px' }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}>
-                <TextField
-                  label="Flow ID"
-                  type="number"
+
+              <TableCell sx={{ padding: '1px' }}>
+                <FormControl sx={{ m: 1, minWidth: 100 }}>
+                <InputLabel >Flow ID</InputLabel>
+                <Select
                   value={row.flow_id}
                   onChange={(e) => {
                     const value = Number(e.target.value);
@@ -268,13 +289,24 @@ useEffect(() => {
                       handleInputChange(index, "flow_id", value);
                     }
                   }}
-                  variant="outlined"
                   fullWidth
-                />
+                  displayEmpty
+                >
+                  <MenuItem value="">
+                    <em>--選択--</em>
+                  </MenuItem>
+                  {flows.map((flow) => (
+                    <MenuItem key={flow.id} value={flow.id}>
+                      {flow.id}: {flow.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                </FormControl>
               </TableCell>
-              <TableCell sx={{ padding: '5px' }}>
+
+              <TableCell sx={{ padding: '1px', maxWidth: '80px', minWidth: '80px' }}>
                 <TextField
-                  label="ユーザーID"
+                  label="UserID"
                   value={selectUserID}
                   variant="outlined"
                   fullWidth
@@ -282,6 +314,7 @@ useEffect(() => {
                 />
                 {/* <Typography variant="h6">{selectUserID}</Typography> */}
               </TableCell>
+              
               <TableCell sx={{ padding: '5px' }}>
                 <Button
                   variant="outlined"
