@@ -49,14 +49,14 @@ export default function SinseiTeishutsu() {
   }
 
   const submitApplications = async () => {
+    const promises: any = []
     selectedApplicationIDs.forEach(async (application_id) => {
-      api.submittions.createSubmittion({ shinsei_id: application_id, user_id: userID }).then((res: any) => {
-        console.log(res);
-      }).catch((e: any) => {
-        console.log(e)
-      });
+      const promise = api.submittions.createSubmittion({ shinsei_id: application_id, user_id: userID })
+      promises.push(promise)
     });
 
+    await Promise.all(promises)
+    
     fetchApplicaions()
   }
 

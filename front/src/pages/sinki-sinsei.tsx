@@ -163,7 +163,6 @@ const registerSinsei = async () => {
 
     const res = await promise
     if (res.data) {
-      alert("申請登録しました");
     } else if (res.error){
       errors.push(res.error)
     }
@@ -175,6 +174,8 @@ const registerSinsei = async () => {
     console.log("申請エラー")
     console.log(errors)
     alert("Error: see the console")
+  } else {
+    alert("申請登録しました");
   }
 };
 
