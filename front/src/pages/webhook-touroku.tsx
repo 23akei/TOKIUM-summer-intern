@@ -4,6 +4,8 @@ import { api } from "../const";
 import { Webhook, WebhookEntry } from "../../openapi/api";
 import { Context } from "../Context";
 
+import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Box, Paper } from '@mui/material';
+
 
 interface CreateWebhook {
   user_id?: number,
@@ -93,39 +95,55 @@ export default function WebhookTouroku() {
   }, [userID])
   
   return (
-    <div>
+    <Box sx={{ paddingRight: 15, paddingLeft: 15 }}>
       <Typography variant="h5" gutterBottom>
         Webhook登録画面
       </Typography>
       
-
-      <div>
-        <div>
-          <select value={createWebhook.entry} onChange={(e) => {
-                createWebhook.entry = e.target.value
-                setCreateWebhook({...createWebhook})
-              }}>
-            <option value="">--選択--</option>
+      <Paper sx={{ padding: 2, marginBottom: 2 }}>
+        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+          <InputLabel>エントリ</InputLabel>
+          <Select
+            value={createWebhook.entry}
+            onChange={(e) => {
+              setCreateWebhook({ ...createWebhook, entry: e.target.value });
+            }}
+            label="エントリ"
+          >
+            <MenuItem value="">
+              <em>--選択--</em>
+            </MenuItem>
             {entries.map((ke) => (
-              <option key={ke} value={ke}>{ke}</option>
+              <MenuItem key={ke} value={ke}>{ke}</MenuItem>
             ))}
-          </select>
+          </Select>
+        </FormControl>
         
-          <span>url: </span><input value={createWebhook.url} onChange={(e) => {
-            createWebhook.url = e.target.value
-            setCreateWebhook({...createWebhook})
-          }}></input>
-        </div>
-        <button onClick={registerWebhook}>作成</button>
-      </div>
+        <TextField
+          label="URL"
+          variant="outlined"
+          fullWidth
+          value={createWebhook.url}
+          onChange={(e) => {
+            setCreateWebhook({ ...createWebhook, url: e.target.value });
+          }}
+          sx={{ marginBottom: 2 }}
+        />
 
-      {webhooks.map(webhook => (
-        <div style={{padding: "10px"}}>
-          <div>{webhook.entry}</div>
-          <div>{webhook.url}</div>
-          <button onClick={() => deleteWebhook(webhook.id)}>削除</button>
-        </div>
+        <Button variant="contained" color="primary" onClick={registerWebhook}>
+          作成
+        </Button>
+      </Paper>
+
+      {webhooks.map((webhook) => (
+        <Paper key={webhook.id} sx={{ padding: 2, marginBottom: 2 }}>
+          <Typography variant="subtitle1">{webhook.entry}</Typography>
+          <Typography variant="body2">{webhook.url}</Typography>
+          <Button variant="outlined" color="secondary" onClick={() => deleteWebhook(webhook.id)}>
+            削除
+          </Button>
+        </Paper>
       ))}
-    </div>
+    </Box>
   )
 }
