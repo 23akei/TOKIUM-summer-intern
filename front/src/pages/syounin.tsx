@@ -60,6 +60,7 @@ export default function Syounin() {
   }, [userID])
 
   const getApprovalsByUserID = async () => {
+    setSelectedApprovals([])
     let apprs: ApprovalAndApplication[];
     {
       const res = await api.approvals.getApprovalsByUserId(userID)
@@ -171,7 +172,8 @@ export default function Syounin() {
                 />
               </TableCell>
               <TableCell>{appr.approval.status}</TableCell>
-              <TableCell>{appr.approval.approved_user_id}</TableCell>
+              <TableCell>{appr.application?.user_id}</TableCell>
+              <TableCell>{appr.approval.comment}</TableCell>
               <TableCell>{appr.application?.id}</TableCell>
               <TableCell>{appr.application?.flow_id}</TableCell>
               <TableCell>{appr.application?.title}</TableCell>
@@ -209,7 +211,8 @@ export default function Syounin() {
           <>
             <TableRow key={appr.approval.id}>
               <TableCell>{appr.approval.status}</TableCell>
-              <TableCell>{appr.approval.approved_user_id}</TableCell>
+              <TableCell>{appr.application?.user_id}</TableCell>
+              <TableCell>{appr.approval.comment}</TableCell>
               <TableCell>{appr.application?.id}</TableCell>
               <TableCell>{appr.application?.flow_id}</TableCell>
               <TableCell>{appr.application?.title}</TableCell>
@@ -327,6 +330,7 @@ export default function Syounin() {
               <TableCell></TableCell>
               <TableCell>Status</TableCell>
               <TableCell>from user id</TableCell>
+              <TableCell>Comment</TableCell>
               <TableCell>Shinsei ID</TableCell>
               <TableCell>Flow ID</TableCell>
               <TableCell>Title</TableCell>
@@ -383,6 +387,7 @@ export default function Syounin() {
                   <TableRow>
                     <TableCell>Status</TableCell>
                     <TableCell>from user id</TableCell>
+                    <TableCell>Comment</TableCell>
                     <TableCell>Shinsei ID</TableCell>
                     <TableCell>Flow ID</TableCell>
                     <TableCell>Title</TableCell>
