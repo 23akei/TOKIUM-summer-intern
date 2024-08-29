@@ -194,8 +194,8 @@ useEffect(() => {
       <Table >
         <TableBody >
           {rows.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell sx={{ padding: '1px' }}> {/* セル間の隙間を狭める */}
+            <TableRow key={index} sx={{display: 'flex', flexWrap:"wrap", alignItems: "center", background: "#fafafa", padding:"10px 0 0 10px",margin:"10px", borderRadius: "10px"}}>
+              <TableCell sx={{ padding: '10px' }}> {/* セル間の隙間を狭める */}
                 <TextField
                   label="タイトル"
                   value={row.title}
@@ -207,7 +207,7 @@ useEffect(() => {
 
                 />
               </TableCell>
-              <TableCell sx={{ padding: '1px' }}>
+              <TableCell sx={{ padding: '10px' }}>
                 <TextField
                   label="日付"
                   type="date"
@@ -222,7 +222,7 @@ useEffect(() => {
                   }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '1px' }}>
+              <TableCell sx={{ padding: '10px' }}>
                 <TextField
                   label="詳細"
                   value={row.description}
@@ -233,7 +233,7 @@ useEffect(() => {
                   style={{ width: '150px' }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '1px' }}>
+              <TableCell sx={{ padding: '10px' }}>
                 <TextField
                   label="科目"
                   value={row.kind}
@@ -244,7 +244,7 @@ useEffect(() => {
                   style={{ width: '150px' }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '1px' }}>
+              <TableCell sx={{ padding: '10px' }}>
                 <TextField
                   label="店舗"
                   value={row.shop}
@@ -255,13 +255,11 @@ useEffect(() => {
                   style={{ width: '150px' }}
                 />
               </TableCell>
-              <TableCell sx={{ padding: '3px'}}>
-              <TableCell sx={{ padding: "3px" }}>
+              <TableCell sx={{ padding: "10px", height: "100%" }}>
                 <Button onClick={() => openModal(index)}>マップ</Button>
               </TableCell>
-              </TableCell>
 
-              <TableCell sx={{ padding: '1px' }}>
+              <TableCell sx={{ padding: '10px' }}>
                 <TextField
                   label="金額"
                   type="number"
@@ -278,8 +276,8 @@ useEffect(() => {
                 />
               </TableCell>
 
-              <TableCell sx={{ padding: '1px' }}>
-                <FormControl sx={{ m: 1, minWidth: 100 }}>
+              <TableCell sx={{ padding: '10px' }}>
+                <FormControl sx={{ minWidth: 100 }}>
                 <InputLabel >Flow ID</InputLabel>
                 <Select
                   value={row.flow_id}
@@ -304,6 +302,7 @@ useEffect(() => {
                 </FormControl>
               </TableCell>
 
+            {/*
               <TableCell sx={{ padding: '1px', maxWidth: '80px', minWidth: '80px' }}>
                 <TextField
                   label="UserID"
@@ -312,8 +311,9 @@ useEffect(() => {
                   fullWidth
                   disabled
                 />
-                {/* <Typography variant="h6">{selectUserID}</Typography> */}
+                <Typography variant="h6">{selectUserID}</Typography>
               </TableCell>
+            */}
               
               <TableCell sx={{ padding: '5px' }}>
                 <Button
@@ -322,7 +322,7 @@ useEffect(() => {
                   onClick={() => copyRow(index)}
                   size="small"
                 >
-                  コピー
+                  複製
                 </Button>
                 <Button
                   variant="outlined"
