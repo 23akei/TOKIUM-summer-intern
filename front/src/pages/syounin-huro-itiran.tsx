@@ -2,6 +2,24 @@ import { useContext, useEffect, useState } from "react";
 import { api } from "../const";
 import { Flow, Approvers, Condition } from "../../openapi/api";
 import { Context } from "../Context";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper, Box } from '@mui/material';
+import styled from '@emotion/styled';
+
+const StyledTableCell = styled(TableCell)({
+  maxWidth: 200,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+});
+
+// sx={{
+//   maxWidth: 200,
+//   overflow: 'hidden',
+//   textOverflow: 'ellipsis',
+//   whiteSpace: 'nowrap',
+// }}
+
+// border: '2px solid #000000',
 
 export default function SyouninHuroItiran() {
   const { userID } = useContext(Context);
@@ -18,6 +36,8 @@ export default function SyouninHuroItiran() {
     }
   };
 
+
+
   useEffect(() => {
     fetchFlows();
 
@@ -27,78 +47,76 @@ export default function SyouninHuroItiran() {
   console.log(flows);  // Log the fetched flows to inspect the data structure
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <table border={1} cellPadding={5}>
-          <thead>
-            <tr>
-              <th>フローID</th>
-              <th>フロー名</th>
-              <th>条件</th>
-              <th>承認者</th>
-            </tr>
-          </thead>
-          <tbody>
+      <Box display="flex" justifyContent="center">
+      <TableContainer component={Paper} sx={{ maxWidth: 800 }}>
+        <Table>
+          <TableHead>
+            <TableRow sx={{backgroundColor: '#c9c9c9', color: 'white',}}>
+              <StyledTableCell ><Typography variant="h6">フローID</Typography></StyledTableCell>
+              <StyledTableCell><Typography variant="h6">フロー名</Typography></StyledTableCell>
+              <StyledTableCell><Typography variant="h6">条件</Typography></StyledTableCell>
+              <StyledTableCell ><Typography variant="h6">承認者</Typography></StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {flows && flows.length > 0 ? (
               flows.map((item, index) => {
-                if (item.flow == undefined) return;
+                if (item.flow == undefined) return null;
+
                 const conditions = item.flow
                   ?.filter((f): f is Condition => 'condition' in f)
                   .flatMap(app => app.condition)
-                  .filter(user => user);  // Filters out undefined
+                  .filter(Boolean); // Filters out undefined
 
                 const approvers = item.flow
                   ?.filter((f): f is Approvers => 'approvers' in f)
                   .flatMap(app => app.approvers)
-                  .filter(user => user);  // Filters out undefined
+                  .filter(Boolean); // Filters out undefined
 
                 return (
-                  <tr key={index}>
-                    <td>{item.id}</td>
-                    <td>{item.name}</td>
-
-                    <td>
+                  <TableRow key={index}>
+                    <TableCell>{item.id}</TableCell>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>
                       {conditions && conditions.length > 0 ? (
-
                         <div>
                           {conditions.map((cond, i) => (
                             <span key={i}>
                               <strong>ステップ: {cond?.step}</strong>&nbsp;
                               <span>キー: {cond?.key}</span>&nbsp;
                               <span>条件: {cond?.condition}</span>&nbsp;
-                              <span>値: {cond?.condition}</span>
+                              <span>値: {cond?.value}</span>
                               {i < conditions.length - 1 && <span>&nbsp;|&nbsp;</span>} {/* 区切りを追加 */}
                             </span>
                           ))}
                         </div>
                       ) : (
-                        <p>条件なし</p>
+                        <Typography variant="body2">条件なし</Typography>
                       )}
-                    </td>
-
-                    <td>
+                    </TableCell>
+                    <TableCell>
                       {approvers && approvers.length > 0 ? (
                         approvers.map((user, i) => (
-                          <div key={i}>
-                            <p>{user?.name}</p>
-                          </div>
+                          <Typography key={i} variant="body2">{user?.name}</Typography>
                         ))
                       ) : (
-                        <p>承認者なし</p>
+                        <Typography variant="body2">承認者なし</Typography>
                       )}
-                    </td>
-
-
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 );
               })
             ) : (
-              <tr>
-                <td colSpan={4}>データがありません</td>
-              </tr>
+              <TableRow>
+                <TableCell colSpan={4}>
+                  <Typography variant="body2">データがありません</Typography>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
-      </div>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
     </>
   );
 }
