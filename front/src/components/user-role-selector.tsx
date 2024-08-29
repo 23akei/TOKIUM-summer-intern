@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import { Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, TextField, Typography } from '@mui/material';
 import type { AutocompleteProps } from '@mui/material/Autocomplete';
 
 import {api} from '../const';
@@ -26,18 +26,21 @@ export function UserRoleSelector({label, value, updateText, ...props}: UserRoleS
   }, []);
 
   return (
-    <Autocomplete
-      freeSolo
-      options={[...roles, value]} // Add the value to the options array
-      getOptionLabel={(option) => option}
-      style={{ width: 300 }}
-      onChange={(_, value) => updateText(value as string)}
-      renderInput={(params) => <TextField
-        {...params}
-        label={label}
-        value={value}
-      />}
-      {...props}
-    />
+    <>
+      <Autocomplete
+        freeSolo
+        options={[...roles, value]} // Add the value to the options array
+        getOptionLabel={(option) => option}
+        style={{ width: 300 }}
+        onChange={(_, value) => updateText(value as string)}
+        renderInput={(params) => <TextField
+          {...params}
+          label={label}
+          value={value}
+        />}
+        {...props}
+      />
+      <Typography variant="body2">役職入力後Enterで役職を追加できます</Typography>
+    </>
   );
 }
