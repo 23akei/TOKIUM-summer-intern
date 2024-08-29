@@ -1,3 +1,5 @@
+require 'net/http'
+
 class WebhookService
 
   def fire_event(entry_type, user_id)
