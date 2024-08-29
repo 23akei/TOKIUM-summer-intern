@@ -30,14 +30,18 @@ class WebhookService
       return
     end
     
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Post.new(uri.path.empty? ? "/" : uri.path)
-    request['Content-Type'] = 'application/json'
-    request.body = {
-      entry_type: entry_type,
-      data: data
-    }.to_json
-    http.request(request)
+    begin
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      request = Net::HTTP::Post.new(uri.path.empty? ? "/" : uri.path)
+      request['Content-Type'] = 'application/json'
+      request.body = {
+        entry_type: entry_type,
+        data: data
+      }.to_json
+      http.request(request)
+    rescue => e
+      puts "request to webhook failed: #{url}"
+    end
   end
 end
