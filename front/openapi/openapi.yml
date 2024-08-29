@@ -898,6 +898,9 @@ components:
         status:
           description: 承認状態（approved, pending, rejected）
           type: string
+        comment:
+          description: コメント
+          type: string
     Keys:
       description: 条件のキー
       type: object

@@ -39,7 +39,7 @@ module Api
       private
 
       def approval_params
-        params.require(:approval).permit(:id, :shinsei_id, :submittion_id, :step, :approved_user_id, :status, :updated_at, :created_at)
+        params.require(:approval).permit(:id, :shinsei_id, :submittion_id, :step, :approved_user_id, :status, :comment, :updated_at, :created_at)
       end
     end
   end
