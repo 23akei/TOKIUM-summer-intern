@@ -6,11 +6,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
+import { UserRoleSelector } from "../components/user-role-selector.tsx";
 
 export default function SinkiUserSakusei() {
 
   const {setUserID} = useContext(Context);
-  
+
   const [name, setName] = useState("");
 
   const [role, setRole] = useState("");
@@ -39,14 +40,14 @@ export default function SinkiUserSakusei() {
               value={name}
               onChange={(event) => setName(event.target.value)}
               fullWidth
+              required={true}
               margin="normal"
             />
-            <TextField
+            <UserRoleSelector
               label="役職"
               value={role}
               onChange={(event) => setRole(event.target.value)}
               fullWidth
-              margin="normal"
             />
           </Box>
           <Box mt={4}>
@@ -59,20 +60,6 @@ export default function SinkiUserSakusei() {
           </Box>
         </Box>
       </Container>
-
-
-      {/* <div>
-      <p>新規ユーザー作成画面</p>
-      <p>名前</p>
-      <input value={name} onChange={(event)=>{setName(event.target.value)}}></input>
-      <p>役職</p>
-      <input value={role} onChange={(event)=>{setRole(event.target.value)}}></input>
-
-      <div>
-      <button onClick={registerUser}>作成</button>
-      </div>
-      
-      </div> */}
       </>
   )
 }
