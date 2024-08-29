@@ -1,5 +1,8 @@
-class WebhookService
+require 'net/http'
+require 'uri'
 
+
+class WebhookService
   def fire_event(entry_type, user_id)
     webhooks = Webhook.where(user_id: user_id, entry: entry_type)
     if webhooks.nil?
@@ -15,8 +18,7 @@ class WebhookService
   def send_request(url, entry_type, message)
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = (uri.scheme == 'https')
-    request = Net::HTTP::Post.new(uri.request_uri)
+    request = Net::HTTP::Post.new(uri.path)
     request['Content-Type'] = 'application/json'
     request.body = {
       entry_type: entry_type,
