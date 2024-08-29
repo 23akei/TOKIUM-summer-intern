@@ -117,10 +117,10 @@ export default function SinseiTeishutsu() {
           未申請
         </Typography>
         <div>
-         <Button variant="contained"  style={{ backgroundColor: 'grey', color: 'white' }}  onClick={selectAllApplications}>
+         <Button variant="contained"  style={{ margin: '5px', backgroundColor: 'grey', color: 'white' }}  onClick={selectAllApplications}>
           すべて選択
          </Button>
-         <Button variant="contained" style={{ backgroundColor: 'grey', color: 'white' }} onClick={unselectAllApplications}>
+         <Button variant="contained" style={{ margin: '5px', backgroundColor: 'grey', color: 'white' }} onClick={unselectAllApplications}>
           すべて選択解除
           </Button>
         </div>
@@ -185,7 +185,29 @@ export default function SinseiTeishutsu() {
             <TableBody>
               {submittedList.map((sub) => (
                 <TableRow key={sub.application?.id}>
-                  <TableCell>{sub.submittion.status}</TableCell>
+                  <TableCell>
+                    <Box 
+                      sx={{
+                        display: 'inline-block',
+                        padding: '2px 4px',
+                        border: `2px solid ${
+                          sub.submittion.status === 'approve' ? 'green' :
+                          sub.submittion.status === 'pending' ? 'orange' :
+                          sub.submittion.status === 'reject' ? 'red' :
+                          'gray'
+                        }`,
+                        borderRadius: '4px',
+                        backgroundColor: `${
+                          sub.submittion.status === 'approve' ? 'lightgreen' :
+                          sub.submittion.status === 'pending' ? 'lightyellow' :
+                          sub.submittion.status === 'reject' ? 'lightcoral' :
+                          'lightgray'
+                        }`,
+                      }}
+                    >
+                      {sub.submittion.status}
+                    </Box>
+                  </TableCell>
                   <TableCell>{sub.application?.title}</TableCell>
                   <TableCell>{sub.application?.id}</TableCell>
                   <TableCell>{sub.application?.flow_id}</TableCell>
