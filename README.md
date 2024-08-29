@@ -54,6 +54,11 @@ bin/rails generate model モデル名 カラム名:型 カラム名:型 ...
 ```
 
 ## Webhook
+http://プライベートIPアドレス:3001をurlとして登録するとwebhook_listener.pyがつかえる
+webhook_listener.pyは、フックを登録したユーザに承認依頼がきた申請のタイトルが”ラーメン”を含む場合、commentに警告を追加する
+例えばその後ユーザーは承認画面から、Commentに”警告”を含む申請を検索して一括却下などをすることができる
+
 ### entry:
 submittion: フックを登録したユーザーの提出した申請の承認が完了したとき
 approval: フックを登録したユーザーに承認依頼がきたとき
+
