@@ -4,12 +4,13 @@ import type { AutocompleteProps } from '@mui/material/Autocomplete';
 
 import {api} from '../const';
 
-interface UserRoleSelectorProps extends Omit<AutocompleteProps<string, false, false, false>, "options" | "renderInput" | "onChange"> {
+interface UserRoleSelectorProps extends Omit<AutocompleteProps<string, false, false, false>, "options" | "renderInput"> {
   label: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  value: string;
+  updateText: (value: string) => void;
 }
 
-export function UserRoleSelector({label, onChange, ...props}: UserRoleSelectorProps) {
+export function UserRoleSelector({label, value, updateText, ...props}: UserRoleSelectorProps) {
   const [roles, setRoles] = useState<string[]>([]);
   useEffect(() => {
   api.users.getUsers()
@@ -28,10 +29,11 @@ export function UserRoleSelector({label, onChange, ...props}: UserRoleSelectorPr
       options={roles}
       getOptionLabel={(option) => option}
       style={{ width: 300 }}
+      onChange={(_, value) => updateText(value as string)}
       renderInput={(params) => <TextField
         {...params}
         label={label}
-        onChange={onChange}
+        value={value}
       />}
       {...props}
     />

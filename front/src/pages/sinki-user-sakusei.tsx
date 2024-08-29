@@ -46,7 +46,7 @@ export default function SinkiUserSakusei() {
             <UserRoleSelector
               label="役職"
               value={role}
-              onChange={(event) => setRole(event.target.value)}
+              updateText={(text) => setRole(text)}
               fullWidth
             />
           </Box>
