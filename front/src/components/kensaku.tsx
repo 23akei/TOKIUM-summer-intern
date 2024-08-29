@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react"
 import { ApprovalAndApplication } from "../pages/syounin.tsx"
+import { Box, Button, TextField, Typography } from '@mui/material';
 
 
 function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Dispatch<React.SetStateAction<Jouken>>}) {
@@ -69,37 +70,69 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
       })
     }
   }
+
   
   return (
     <>
-      <div style={{textAlign:"left", padding:"0 20%" }}>
-        <div>
-          <span>from user id: </span>
-          <input type="number" value={jouken.userID!=null?jouken.userID:""} onChange={changeUserID} />
-        </div>
+      <Box sx={{ textAlign: 'left', padding: '0 20%' }}>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body1">from user id:</Typography>
+          <TextField
+            type="number"
+            size="small"
+            value={jouken.userID != null ? jouken.userID : ''}
+            onChange={changeUserID}
+            fullWidth
+          />
+        </Box>
 
         {/* <div>
           <span>role: </span>
           <input value={jouken.role} />
         </div> */}
 
-        <div>
-          <span>amount: </span>
-      <input type="number" value={jouken.minAmount!=null?jouken.minAmount:""} onChange={changeMinAmount}/>円以上
-      <input type="number" value={jouken.maxAmount!=null?jouken.maxAmount:""} onChange={changeMaxAmount} />円以下
-        </div>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body1">amount:</Typography>
+          <TextField
+            type="number"
+            size="small"
+            value={jouken.minAmount != null ? jouken.minAmount : ''}
+            onChange={changeMinAmount}
+            label="Minimum Amount"
+            sx={{ mr: 2 }}
+            fullWidth
+          />
+          <TextField
+            type="number"
+            size="small"
+            value={jouken.maxAmount != null ? jouken.maxAmount : ''}
+            onChange={changeMaxAmount}
+            label="Maximum Amount"
+            fullWidth
+          />
+        </Box>
 
-        <div>
-          <span>status: </span>
-      <input value={jouken.status||""} onChange={changeStatus}/>
-        </div>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body1">status:</Typography>
+          <TextField
+            size="small"
+            value={jouken.status || ''}
+            onChange={changeStatus}
+            fullWidth
+          />
+        </Box>
 
-        <div>
-          <span>flow id: </span>
-      <input type="number" value={jouken.flowID!=null?jouken.flowID:""} onChange={changeFlowID}/>
-        </div>
-      </div>
-
+        <Box>
+          <Typography variant="body1">flow id:</Typography>
+          <TextField
+            type="number"
+            size="small"
+            value={jouken.flowID != null ? jouken.flowID : ''}
+            onChange={changeFlowID}
+            fullWidth
+          />
+        </Box>
+      </Box>
 
     </>
   )
@@ -202,8 +235,8 @@ export default function Kensaku({approvals, setKensakuApprovals, unselectAll}: {
       {!isCollapsed &&
         (
           <>
-            <p>条件</p>
-            <button onClick={clearKensaku}>clear</button>
+            <Typography>条件</Typography>
+            <Button onClick={clearKensaku}>clear</Button>
 
             <KensakuJouken jouken={jouken} setJouken={setJouken} />
           </>
