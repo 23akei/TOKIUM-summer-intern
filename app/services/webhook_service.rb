@@ -1,7 +1,6 @@
 require 'net/http'
 require 'uri'
 
-
 class WebhookService
   def fire_event(entry_type, user_id)
     webhooks = Webhook.where(user_id: user_id, entry: entry_type)
