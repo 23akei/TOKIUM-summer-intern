@@ -60,6 +60,7 @@ export default function Syounin() {
   }, [userID])
 
   const getApprovalsByUserID = async () => {
+    setSelectedApprovals([])
     let apprs: ApprovalAndApplication[];
     {
       const res = await api.approvals.getApprovalsByUserId(userID)
