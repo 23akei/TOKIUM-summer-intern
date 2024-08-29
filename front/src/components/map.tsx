@@ -3,7 +3,7 @@ import { Map, APIProvider, MapMouseEvent, useMap, useMapsLibrary } from '@vis.gl
 
 const containerStyle: React.CSSProperties = {
   width: '100%',
-  height: '600px',
+  height: '60vh',
   minWidth: '500px',
 };
 
