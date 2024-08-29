@@ -70,7 +70,19 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
       })
     }
   }
-
+  const changeComment = (e:any) => {
+    if (e.target.value == "") {
+      setJouken({
+        ...jouken,
+        comment: null,
+      })
+    } else {
+      setJouken({
+        ...jouken,
+        comment: e.target.value
+      })
+    }
+  }
   
   return (
     <>
@@ -98,7 +110,7 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
             size="small"
             value={jouken.minAmount != null ? jouken.minAmount : ''}
             onChange={changeMinAmount}
-            label="Minimum Amount"
+            label="円以上"
             sx={{ mr: 2 }}
             fullWidth
           />
@@ -107,7 +119,7 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
             size="small"
             value={jouken.maxAmount != null ? jouken.maxAmount : ''}
             onChange={changeMaxAmount}
-            label="Maximum Amount"
+            label="円以下"
             fullWidth
           />
         </Box>
@@ -115,6 +127,7 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
         <Box sx={{ mb: 2 }}>
           <Typography variant="body1">status:</Typography>
           <TextField
+            label="includes"
             size="small"
             value={jouken.status || ''}
             onChange={changeStatus}
@@ -122,13 +135,23 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
           />
         </Box>
 
-        <Box>
+        <Box sx={{mb:2}}>
           <Typography variant="body1">flow id:</Typography>
           <TextField
             type="number"
             size="small"
             value={jouken.flowID != null ? jouken.flowID : ''}
             onChange={changeFlowID}
+            fullWidth
+          />
+        </Box>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body1">Comment:</Typography>
+          <TextField
+            label="includes..."
+            size="small"
+            value={jouken.comment || ''}
+            onChange={changeComment}
             fullWidth
           />
         </Box>
@@ -154,6 +177,7 @@ type Jouken = {
   maxAmount: number|null,
   status: string|null,
   flowID: number|null,
+  comment: string|null
 }
 
 function isAllNull(...args:any) {
@@ -175,6 +199,7 @@ function makeEmptyJouken() {
     maxAmount: null,
     status: null,
     flowID: null,
+    comment:null,
   }
 }
 
@@ -195,11 +220,17 @@ function filterWithJouken(approvals: ApprovalAndApplication[], setKensakuApprova
       }
 
       if (jouken.status != null) {
-        if (appr.approval.status != jouken.status) return false;
+        if (!appr.approval.status) return false
+        if (!appr.approval.status.includes(jouken.status)) return false;
       }
       
       if (jouken.flowID != null) {
         if (appr.application?.flow_id != jouken.flowID) return false;
+      }
+
+      if (jouken.comment != null) {
+        if (!appr.approval.comment) return false
+        if (!appr.approval.comment.includes(jouken.comment)) return false
       }
       
       return true

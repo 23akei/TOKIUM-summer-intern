@@ -85,6 +85,7 @@ export default function SinseiTeishutsu() {
   }
 
   const fetchApplicaions = async () => {
+    setSelectedApplicationIDs([])
     const resApplications = await api.application.getApplicationsByUserId(userID as number)
     const resSubmittions = await api.submittions.getSubmittionsByUserId(userID as number)
 

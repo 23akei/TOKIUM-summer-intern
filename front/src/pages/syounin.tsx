@@ -60,6 +60,7 @@ export default function Syounin() {
   }, [userID])
 
   const getApprovalsByUserID = async () => {
+    setSelectedApprovals([])
     let apprs: ApprovalAndApplication[];
     {
       const res = await api.approvals.getApprovalsByUserId(userID)
@@ -331,6 +332,7 @@ export default function Syounin() {
               <TableCell></TableCell>
               <TableCell>Status</TableCell>
               <TableCell>from user id</TableCell>
+              <TableCell>Comment</TableCell>
               <TableCell>Shinsei ID</TableCell>
               <TableCell>Flow ID</TableCell>
               <TableCell>Title</TableCell>
@@ -387,6 +389,7 @@ export default function Syounin() {
                   <TableRow>
                     <TableCell>Status</TableCell>
                     <TableCell>from user id</TableCell>
+                    <TableCell>Comment</TableCell>
                     <TableCell>Shinsei ID</TableCell>
                     <TableCell>Flow ID</TableCell>
                     <TableCell>Title</TableCell>
