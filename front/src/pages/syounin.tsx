@@ -174,7 +174,8 @@ export default function Syounin() {
               <Box sx={{display: 'inline-block', padding: '2px 4px', border: '2px solid orange', borderRadius: '4px', backgroundColor: 'lightyellow', }}>
                 <TableCell>{appr.approval.status}</TableCell>
               </Box>
-              <TableCell>{appr.approval.approved_user_id}</TableCell>
+              <TableCell>{appr.application?.user_id}</TableCell>
+              <TableCell>{appr.approval.comment}</TableCell>
               <TableCell>{appr.application?.id}</TableCell>
               <TableCell>{appr.application?.flow_id}</TableCell>
               <TableCell>{appr.application?.title}</TableCell>
@@ -214,7 +215,8 @@ export default function Syounin() {
               <Box sx={{display: 'inline-block',border: '2px solid orange', borderRadius: '4px', backgroundColor: 'lightyellow', }}>
                 <TableCell>{appr.approval.status}</TableCell>
               </Box>
-              <TableCell>{appr.approval.approved_user_id}</TableCell>
+              <TableCell>{appr.application?.user_id}</TableCell>
+              <TableCell>{appr.approval.comment}</TableCell>
               <TableCell>{appr.application?.id}</TableCell>
               <TableCell>{appr.application?.flow_id}</TableCell>
               <TableCell>{appr.application?.title}</TableCell>
