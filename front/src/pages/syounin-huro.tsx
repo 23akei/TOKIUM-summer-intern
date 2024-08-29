@@ -2,6 +2,8 @@ import {useState, useEffect} from "react"
 import { api } from "../const"
 import { CreateApprovers, CreateCondition, User } from "../../openapi/api";
 import { CreateFlow } from "../../openapi/api";
+import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Box, Grid, Typography, Paper } from '@mui/material';
+
 const conditionLabels: Record<string, string> = {
   "eq": "=",
   "neq": "!=",
@@ -139,87 +141,158 @@ export default function SyouninHuro() {
   return (
     <>
     <div>
-      <div>
-      <span>名前 </span>
-      <input value={createFlow.name} onChange={(e) => {
-        createFlow.name = e.target.value
-        setCreateFlow({...createFlow})
-      }} />
-      </div>
+    <Paper sx={{ padding: 3 }}>
+      <Box component="form">
+        <Typography variant="h6" gutterBottom>
+          フローの作成
+        </Typography>
 
-      <div>
-        {createFlow.flow && createFlow.flow.map((f, fIndex) => {
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              label="名前"
+              fullWidth
+              value={createFlow.name}
+              onChange={(e) => {
+                createFlow.name = e.target.value;
+                setCreateFlow({ ...createFlow });
+              }}
+            />
+          </Grid>
 
-          ///////条件
-          if ("condition" in f) {
-            const createCondition = f as CreateCondition;
-            return <div>
-              <p>条件</p>
-              <select value={createCondition.condition?.key} onChange={(e) => setConditionKey(e.target.value, createCondition.condition)}>
-                <option value="">--選択--</option>
-                {conditionKeys.map((ke) => (
-                  <option key={ke} value={ke}>{ke}</option>
-                ))}
-              </select>
-              <select value={createCondition.condition?.condition} onChange={(e) => setConditionComparator(e.target.value, createCondition.condition)}>
-                <option value="">--選択--</option>
-                {comparators.map((comp) => (
-                    <option key={comp} value={comp}>
-                        {conditionLabels[comp]}
-                    </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                value={createCondition.condition?.value}
-                onChange={(e) => setConditionValue(e.target.value, createCondition.condition)}
-                placeholder="Enter text"
-              />
-              <button onClick={(e) => {
-                deleteIthF(fIndex)
-              }}>削除</button>
-            </div>
-          }
-          //////////////
+          <Grid item xs={12}>
+            {createFlow.flow && createFlow.flow.map((f, fIndex) => {
+              if ("condition" in f) {
+                const createCondition = f as CreateCondition;
+                return (
+                  <Box key={fIndex} sx={{ marginBottom: 2 }}>
+                    <Typography variant="subtitle1">条件</Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={4}>
+                        <FormControl fullWidth>
+                          <InputLabel>キー</InputLabel>
+                          <Select
+                            value={createCondition.condition?.key}
+                            onChange={(e) => setConditionKey(e.target.value, createCondition.condition)}
+                          >
+                            {/* <MenuItem value="">--選択--</MenuItem> */}
+                            {conditionKeys.map((ke) => (
+                              <MenuItem key={ke} value={ke}>
+                                {ke}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
 
-          ///////承認者リスト
-          const createApprovers = f as CreateApprovers;
-          return <div>
-            <p>承認者リスト</p>
-            <div>
-            <select onChange={(e) => {addApprover(e, createApprovers.approvers as User[])}}>
-              <option value="">--選択--</option>
-                {users.map((user) => (
-                    <option key={user.id} value={user.id}>{user.id}: {user.name}</option>
-                ))}
-            </select>
-            </div>
-            <div>
-              {createApprovers.approvers?.map(approver => (
-                <div>{approver.id}:{approver.name}</div>
-              ))}
-            </div>
-            <button onClick={(e) => {
-                deleteIthF(fIndex)
-            }}>削除</button>
-          </div>
-          //////////////
-        })}
-      </div>
+                      <Grid item xs={4}>
+                        <FormControl fullWidth>
+                          <InputLabel>条件</InputLabel>
+                          <Select
+                            value={createCondition.condition?.condition}
+                            onChange={(e) => setConditionComparator(e.target.value, createCondition.condition)}
+                          >
+                            {/* <MenuItem value="">--選択--</MenuItem> */}
+                            {comparators.map((comp) => (
+                              <MenuItem key={comp} value={comp}>
+                                {conditionLabels[comp]}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
 
-      <div style={{marginTop:"50px"}}>
-        <button onClick={(e) => {
-          createFlow.flow?.push(makeEmptyCreateCondition())
-          setCreateFlow({...createFlow})
-        }}>条件を追加</button>
-        <button onClick={(e) => {
-          createFlow.flow?.push(makeEmptyCreateApprovers())
-          setCreateFlow({...createFlow})
-        }}>承認者リストを追加</button>
-      </div>
-      <button onClick={registerCreateFlow}>
-        作成
-      </button>
+                      <Grid item xs={4}>
+                        <TextField
+                          fullWidth
+                          label="値"
+                          value={createCondition.condition?.value}
+                          onChange={(e) => setConditionValue(e.target.value, createCondition.condition)}
+                          placeholder="Enter text"
+                        />
+                      </Grid>
+                    </Grid>
+                    <Button
+                      sx={{ marginTop: 1 }}
+                      variant="outlined"
+                      color="error"
+                      onClick={() => deleteIthF(fIndex)}
+                    >
+                      削除
+                    </Button>
+                  </Box>
+                );
+              }
+
+              const createApprovers = f as CreateApprovers;
+              return (
+                <Box key={fIndex} sx={{ marginBottom: 2 }}>
+                  <Typography variant="subtitle1">承認者リスト</Typography>
+                  <FormControl fullWidth>
+                    <InputLabel>承認者を選択</InputLabel>
+                    <Select onChange={(e) => addApprover(e, createApprovers.approvers as User[])}>
+                      {/* <MenuItem value="">--選択--</MenuItem> */}
+                      {users.map((user) => (
+                        <MenuItem key={user.id} value={user.id}>
+                          {user.id}: {user.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Box sx={{ marginTop: 1 }}>
+                    {createApprovers.approvers?.map(approver => (
+                      <Typography sx={{ marginBottom: 1 }} key={approver.id}>
+                        {approver.id}:{approver.name}
+                      </Typography>
+                    ))}
+                  </Box>
+                  <Button
+                    sx={{ marginTop: 1 }}
+                    variant="outlined"
+                    color="error"
+                    onClick={() => deleteIthF(fIndex)}
+                  >
+                    削除
+                  </Button>
+                </Box>
+              );
+            })}
+          </Grid>
+
+          <Grid item xs={12} sx={{ marginTop: 4 }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                createFlow.flow?.push(makeEmptyCreateCondition());
+                setCreateFlow({ ...createFlow });
+              }}
+              sx={{ marginRight: 2 }}
+            >
+              条件を追加
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              // color="secondary"
+              // color="success"
+              onClick={() => {
+                createFlow.flow?.push(makeEmptyCreateApprovers());
+                setCreateFlow({ ...createFlow });
+              }}
+            >
+              承認者リストを追加
+            </Button>
+          </Grid>
+
+          <Grid item xs={12} sx={{ marginTop: 4 }}>
+            <Button variant="contained" color="primary" onClick={registerCreateFlow}>
+              作成
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+    </Paper>
     </div>
     </>
   ) 
