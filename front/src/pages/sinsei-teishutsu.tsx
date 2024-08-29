@@ -39,6 +39,7 @@ export default function SinseiTeishutsu() {
     if (checked) {
       if (!isApplicationSelected(application_id)) {
         selectedApplicationIDs.push(application_id);
+        setSelectedApplicationIDs([...selectedApplicationIDs])
       }
     } else {
       setSelectedApplicationIDs(
