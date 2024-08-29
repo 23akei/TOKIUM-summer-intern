@@ -580,7 +580,7 @@ paths:
       summary: Webhookを作成
       tags:
         - Webhook
-      operationId: updateWebhook
+      operationId: createWebhook
       requestBody:
         required: true
         content:
@@ -649,6 +649,13 @@ paths:
       tags:
         - Webhook
       operationId: getWebhooksByUserId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of user
+          schema:
+            type: integer
       responses:
         '200':
           description: "ok"
