@@ -186,7 +186,6 @@ export default function Syounin() {
               <TableCell>{appr.approval.comment}</TableCell>
               <TableCell>{appr.application?.title}</TableCell>
               <TableCell>{appr.flow?.name}</TableCell>
-              <TableCell>{appr.application?.title}</TableCell>
               <TableCell>{appr.application?.kind}</TableCell>
               <TableCell>{appr.application?.shop}</TableCell>
               <TableCell>{appr.application?.amount}</TableCell>
@@ -227,7 +226,6 @@ export default function Syounin() {
               <TableCell>{appr.approval.comment}</TableCell>
               <TableCell>{appr.application?.title}</TableCell>
               <TableCell>{appr.flow?.name}</TableCell>
-              <TableCell>{appr.application?.title}</TableCell>
               <TableCell>{appr.application?.kind}</TableCell>
               <TableCell>{appr.application?.shop}</TableCell>
               <TableCell>{appr.application?.amount}</TableCell>
@@ -345,7 +343,6 @@ export default function Syounin() {
                     <TableCell>コメント</TableCell>
                     <TableCell>申請タイトル</TableCell>
                     <TableCell>承認フロー</TableCell>
-                    <TableCell>申請タイトル</TableCell>
                     <TableCell>科目</TableCell>
                     <TableCell>店舗</TableCell>
                     <TableCell>金額</TableCell>
@@ -402,7 +399,6 @@ export default function Syounin() {
                     <TableCell>コメント</TableCell>
                     <TableCell>申請タイトル</TableCell>
                     <TableCell>承認フロー</TableCell>
-                    <TableCell>申請タイトル</TableCell>
                     <TableCell>科目</TableCell>
                     <TableCell>店舗</TableCell>
                     <TableCell>金額</TableCell>
