@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { api } from "../const"
 import { Application, Submittion } from "../../openapi/api";
 import { Context } from "../Context";
+import { User } from "../../openapi/api"
 import styled from '@emotion/styled';
 import { Box, Button, Checkbox, Table, TableBody, TableContainer,TableCell,TableHead, TableRow, Typography, Paper} from "@mui/material";
 
@@ -16,9 +17,28 @@ interface SubmittionAndApplication {
 
 export default function SinseiTeishutsu() {
   const { userID } = useContext(Context)
+  const [users, setUsers] = useState<User[]>([])
   const [toSubimitList, setToSubmitList] = useState<Application[]>([]); //submitted yet
   const [submittedList, setSubmittedList] = useState<SubmittionAndApplication[]>([]); //submitted already
   const [selectedApplicationIDs, setSelectedApplicationIDs] = useState<number[]>([]);
+
+
+  const fetchAllUsers = async () => {
+    const res = await api.users.getUsers()
+    if (res.data) {
+      setUsers(res.data)
+    }
+  }
+  
+  useEffect(()=>{
+    fetchAllUsers()
+  }, [])
+
+  function getUserNameById(userId) {
+    const user = users.find(user => user.id === userId);
+    return user ? user.name : "Unknown User";
+  }
+  
 
   const selectAllApplications = () => {
     setSelectedApplicationIDs(
@@ -130,14 +150,14 @@ export default function SinseiTeishutsu() {
             <TableHead sx={{ backgroundColor: '#c9c9c9', color: 'white' }}>
               <TableRow >
                 <TableCell></TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell>Shinsei ID</TableCell>
-                <TableCell>Flow ID</TableCell>
-                <TableCell>User ID</TableCell>
-                <TableCell>Kind</TableCell>
-                <TableCell>Shop</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell>タイトル</TableCell>
+                <TableCell>申請 </TableCell>
+                <TableCell>承認フロー</TableCell>
+                <TableCell>ユーザーネーム</TableCell>
+                <TableCell>科目</TableCell>
+                <TableCell>店舗</TableCell>
+                <TableCell>金額</TableCell>
+                <TableCell>日時</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -154,11 +174,11 @@ export default function SinseiTeishutsu() {
                   <TableCell>{app.title}</TableCell>
                   <TableCell>{app.id}</TableCell>
                   <TableCell>{app.flow_id}</TableCell>
-                  <TableCell>{app.user_id}</TableCell>
+                  <TableCell>{getUserNameById(app.user_id)}</TableCell> {/* user_id を user.name に置き換え */}
                   <TableCell>{app.kind}</TableCell>
                   <TableCell>{app.shop}</TableCell>
                   <TableCell>{app.amount}</TableCell>
-                  <TableCell>{app.date}</TableCell>
+                  <TableCell>{app?.date && new Date(app.date).toLocaleDateString('ja-JP')}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -172,15 +192,15 @@ export default function SinseiTeishutsu() {
           <Table>
             <TableHead>
               <TableRow sx={{ backgroundColor: '#c9c9c9', color: 'white' }}>
-                <TableCell>Status</TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell>Shinsei ID</TableCell>
-                <TableCell>Flow ID</TableCell>
-                <TableCell>User ID</TableCell>
-                <TableCell>Kind</TableCell>
-                <TableCell>Shop</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell>申請状態</TableCell>
+                <TableCell>タイトル</TableCell>
+                <TableCell>申請</TableCell>
+                <TableCell>承認フロー</TableCell>
+                <TableCell>ユーザーネーム</TableCell>
+                <TableCell>科目</TableCell>
+                <TableCell>店舗</TableCell>
+                <TableCell>金額</TableCell>
+                <TableCell>日時</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -212,11 +232,11 @@ export default function SinseiTeishutsu() {
                   <TableCell>{sub.application?.title}</TableCell>
                   <TableCell>{sub.application?.id}</TableCell>
                   <TableCell>{sub.application?.flow_id}</TableCell>
-                  <TableCell>{sub.application?.user_id}</TableCell>
+                  <TableCell>{getUserNameById(sub.application?.user_id)}</TableCell>
                   <TableCell>{sub.application?.kind}</TableCell>
                   <TableCell>{sub.application?.shop}</TableCell>
                   <TableCell>{sub.application?.amount}</TableCell>
-                  <TableCell>{sub.application?.date}</TableCell>
+                  <TableCell>{sub.application?.date && new Date(sub.application?.date).toLocaleDateString('ja-JP')}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
