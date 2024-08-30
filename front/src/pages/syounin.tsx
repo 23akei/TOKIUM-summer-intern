@@ -4,7 +4,7 @@ import {
   Paper, TableContainer, Typography, Box, Snackbar, Alert
 } from '@mui/material';
 import { api } from "../const";
-import { Approval, Application } from "../../openapi/api";
+import { Approval, Application, User, Flow } from "../../openapi/api";
 import { Context } from '../Context.tsx';
 import Kensaku from "../components/kensaku";
 import Modal from '@mui/material/Modal';
@@ -25,6 +25,8 @@ const style = {
 export interface ApprovalAndApplication {
   approval: Approval,
   application?: Application
+  user?: User
+  flow?: Flow
 }
 
 export default function Syounin() {
@@ -68,12 +70,18 @@ export default function Syounin() {
       apprs = res.data.map(appr => ({approval: appr}))
     }
     {
+      const res = await api.users.getUsers()
+      const all_users: User[]= res.data as User[];
+      const res_flow = await api.flows.getFlows()
+      const all_flows = res_flow.data;
       const asyncs: any[] = [];
       apprs = apprs.map((appr) => {
         const a = api.application.getApplicationById(appr.approval.shinsei_id as number)
         asyncs.push(a)
         a.then(res => {
           appr.application = res.data
+          appr.user = all_users.find(user => user.id == appr.application?.user_id)
+          appr.flow = all_flows.find(flow => flow.id == appr.application?.flow_id)
         })
 
         return appr
@@ -174,10 +182,10 @@ export default function Syounin() {
               <Box sx={{display: 'inline-block', padding: '2px 4px', border: '2px solid orange', borderRadius: '4px', backgroundColor: 'lightyellow', }}>
                 <TableCell>{appr.approval.status}</TableCell>
               </Box>
-              <TableCell>{appr.application?.user_id}</TableCell>
+              <TableCell>{appr.user?.name}</TableCell>
               <TableCell>{appr.approval.comment}</TableCell>
-              <TableCell>{appr.application?.id}</TableCell>
-              <TableCell>{appr.application?.flow_id}</TableCell>
+              <TableCell>{appr.application?.title}</TableCell>
+              <TableCell>{appr.flow?.name}</TableCell>
               <TableCell>{appr.application?.title}</TableCell>
               <TableCell>{appr.application?.kind}</TableCell>
               <TableCell>{appr.application?.shop}</TableCell>
@@ -215,10 +223,10 @@ export default function Syounin() {
               <Box sx={{display: 'inline-block',border: '2px solid orange', borderRadius: '4px', backgroundColor: 'lightyellow', }}>
                 <TableCell>{appr.approval.status}</TableCell>
               </Box>
-              <TableCell>{appr.application?.user_id}</TableCell>
+              <TableCell>{appr.user?.name}</TableCell>
               <TableCell>{appr.approval.comment}</TableCell>
-              <TableCell>{appr.application?.id}</TableCell>
-              <TableCell>{appr.application?.flow_id}</TableCell>
+              <TableCell>{appr.application?.title}</TableCell>
+              <TableCell>{appr.flow?.name}</TableCell>
               <TableCell>{appr.application?.title}</TableCell>
               <TableCell>{appr.application?.kind}</TableCell>
               <TableCell>{appr.application?.shop}</TableCell>
@@ -335,7 +343,7 @@ export default function Syounin() {
                     <TableCell>申請状態</TableCell>
                     <TableCell>申請者</TableCell>
                     <TableCell>コメント</TableCell>
-                    <TableCell>申請</TableCell>
+                    <TableCell>申請タイトル</TableCell>
                     <TableCell>承認フロー</TableCell>
                     <TableCell>申請タイトル</TableCell>
                     <TableCell>科目</TableCell>
@@ -392,7 +400,7 @@ export default function Syounin() {
                     <TableCell>申請状態</TableCell>
                     <TableCell>申請者</TableCell>
                     <TableCell>コメント</TableCell>
-                    <TableCell>申請</TableCell>
+                    <TableCell>申請タイトル</TableCell>
                     <TableCell>承認フロー</TableCell>
                     <TableCell>申請タイトル</TableCell>
                     <TableCell>科目</TableCell>
