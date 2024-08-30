@@ -138,6 +138,11 @@ const isSinseiValid = () => {
       alert("amount must be greater than 0")
       return false
     }
+
+    if (row.flow_id <= 0) {
+      alert("invalid flow id")
+      return false
+    }
   }
 
   return true
