@@ -17,7 +17,7 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
       })
     }
   }
-  
+
   const changeMinAmount = (e:any) => {
     if (e.target.value == "") {
       setJouken({
@@ -83,12 +83,12 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
       })
     }
   }
-  
+
   return (
     <>
       <Box sx={{ textAlign: 'left', padding: '0 20%' }}>
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body1">from user id:</Typography>
+          <Typography variant="body1">申請者ユーザID</Typography>
           <TextField
             type="number"
             size="small"
@@ -104,7 +104,7 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
         </div> */}
 
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body1">amount:</Typography>
+          <Typography variant="body1">金額</Typography>
           <TextField
             type="number"
             size="small"
@@ -125,7 +125,7 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
         </Box>
 
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body1">status:</Typography>
+          <Typography variant="body1">状態</Typography>
           <TextField
             label="includes"
             size="small"
@@ -136,7 +136,7 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
         </Box>
 
         <Box sx={{mb:2}}>
-          <Typography variant="body1">flow id:</Typography>
+          <Typography variant="body1">承認フローID</Typography>
           <TextField
             type="number"
             size="small"
@@ -146,7 +146,7 @@ function KensakuJouken({jouken, setJouken}: {jouken: Jouken, setJouken: React.Di
           />
         </Box>
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body1">Comment:</Typography>
+          <Typography variant="body1">コメント</Typography>
           <TextField
             label="includes..."
             size="small"
@@ -223,7 +223,7 @@ function filterWithJouken(approvals: ApprovalAndApplication[], setKensakuApprova
         if (!appr.approval.status) return false
         if (!appr.approval.status.includes(jouken.status)) return false;
       }
-      
+
       if (jouken.flowID != null) {
         if (appr.application?.flow_id != jouken.flowID) return false;
       }
@@ -232,9 +232,9 @@ function filterWithJouken(approvals: ApprovalAndApplication[], setKensakuApprova
         if (!appr.approval.comment) return false
         if (!appr.approval.comment.includes(jouken.comment)) return false
       }
-      
+
       return true
-    })  
+    })
   )
 }
 
@@ -244,11 +244,11 @@ export default function Kensaku({approvals, setKensakuApprovals, unselectAll}: {
 }) {
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [jouken, setJouken] = useState<Jouken>(makeEmptyJouken())
-  
+
   const clearKensaku = () => {
     setJouken(makeEmptyJouken())
   }
-  
+
   useEffect(()=>{
     unselectAll();
     if (isJoukenEmpty(jouken)) {
@@ -258,11 +258,11 @@ export default function Kensaku({approvals, setKensakuApprovals, unselectAll}: {
 
     filterWithJouken(approvals, setKensakuApprovals, jouken)
   }, [jouken, approvals])
-  
+
   return (
     <div style={{marginBottom: "100px", background: "#eee", padding:"20px"}}>
       <p style={kensaku} onClick={()=>{setIsCollapsed(p => !p)}}>検索</p>
-      
+
       {!isCollapsed &&
         (
           <>

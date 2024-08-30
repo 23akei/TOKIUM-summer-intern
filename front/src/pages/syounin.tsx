@@ -64,7 +64,7 @@ export default function Syounin() {
     let apprs: ApprovalAndApplication[];
     {
       const res = await api.approvals.getApprovalsByUserId(userID)
-      
+
       apprs = res.data.map(appr => ({approval: appr}))
     }
     {
@@ -75,10 +75,10 @@ export default function Syounin() {
         a.then(res => {
           appr.application = res.data
         })
-        
+
         return appr
       })
-      
+
       Promise.all(asyncs).then(()=>{
         setApprovals(apprs)
       })
@@ -98,7 +98,7 @@ export default function Syounin() {
 
   const setStatusForSelected = async (status: string) => {
     const promises: any = []
-    
+
     selectedApprovals.forEach(appr => {
       (async () => {
         appr.approval.status = status
@@ -115,7 +115,7 @@ export default function Syounin() {
     Promise.all(promises).then(()=>{
       getApprovalsByUserID()
     })
-    
+
   }
 
   const onSelectApproval = (checked: boolean, appr: ApprovalAndApplication) => {
@@ -134,7 +134,7 @@ export default function Syounin() {
       }
     }
   }
-  
+
   const selectAll = () => {
     if (kensakuApprovals != null) {
       setSelectedApprovals(structuredClone(kensakuApprovals))
@@ -142,11 +142,11 @@ export default function Syounin() {
       setSelectedApprovals(structuredClone(approvals))
     }
   }
-  
+
   const unselectAll = () => {
     setSelectedApprovals([])
   }
-  
+
   const isSelected = (appr:ApprovalAndApplication) => {
     for (let i = 0; i<selectedApprovals.length; i++) {
       if (selectedApprovals[i].approval.id == appr.approval.id) {
@@ -157,7 +157,7 @@ export default function Syounin() {
   }
 
 
-  
+
   const approvalsList = (apprs: ApprovalAndApplication[]) => {
     return (
       <>
@@ -182,7 +182,7 @@ export default function Syounin() {
               <TableCell>{appr.application?.kind}</TableCell>
               <TableCell>{appr.application?.shop}</TableCell>
               <TableCell>{appr.application?.amount}</TableCell>
-              <TableCell>{appr.application?.date}</TableCell>
+              <TableCell>{appr.application?.date && new Date(appr.application.date).toLocaleDateString('ja-JP')}</TableCell>
               <TableCell>
                 <Box display="flex" alignItems="center">
                   <Button sx={{marginRight: 1}} variant="contained" color="primary" onClick={() => setStatus(appr.approval, "approve")}>
@@ -223,7 +223,7 @@ export default function Syounin() {
               <TableCell>{appr.application?.kind}</TableCell>
               <TableCell>{appr.application?.shop}</TableCell>
               <TableCell>{appr.application?.amount}</TableCell>
-              <TableCell>{appr.application?.date}</TableCell>
+              <TableCell>{appr.application?.date &&  new Date(appr.application.date).toLocaleDateString('ja-JP')}</TableCell>
             </TableRow>
             </>
         )
@@ -279,7 +279,7 @@ export default function Syounin() {
     setCurrentIndex(prevIndex => {
       const nextIndex = prevIndex + 1;
       if (nextIndex >= (kensakuApprovals || approvals).length) {
-        return 0; 
+        return 0;
       }
       return nextIndex;
     });
@@ -313,15 +313,15 @@ export default function Syounin() {
       <Button sx={{ margin: 1}}variant="contained" color="secondary" onClick={() => setStatusForSelected("reject")}>
         まとめて却下
       </Button>
-      <Button 
-        sx={{ 
-          marginLeft: 10, 
-          backgroundColor: '#00a152', 
+      <Button
+        sx={{
+          marginLeft: 10,
+          backgroundColor: '#00a152',
           color: 'white',
           '&:hover': {
             backgroundColor: '#007a40', // ホバー時の色を設定
           },
-        }} 
+        }}
         variant="contained"
         onClick={handleOpen}
       >
@@ -332,16 +332,16 @@ export default function Syounin() {
           <TableHead>
             <TableRow>
               <TableCell></TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>from user id</TableCell>
-              <TableCell>Comment</TableCell>
-              <TableCell>Shinsei ID</TableCell>
-              <TableCell>Flow ID</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Kind</TableCell>
-              <TableCell>Shop</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Date</TableCell>
+                    <TableCell>申請状態</TableCell>
+                    <TableCell>申請者</TableCell>
+                    <TableCell>コメント</TableCell>
+                    <TableCell>申請</TableCell>
+                    <TableCell>承認フロー</TableCell>
+                    <TableCell>申請タイトル</TableCell>
+                    <TableCell>科目</TableCell>
+                    <TableCell>店舗</TableCell>
+                    <TableCell>金額</TableCell>
+                    <TableCell>日時</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -366,18 +366,18 @@ export default function Syounin() {
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <Button 
-                sx={{ backgroundColor: '#ff9100', color: 'white', '&:hover': { backgroundColor: '#b26500' } }} 
-                variant="contained" 
-                color="secondary" 
+              <Button
+                sx={{ backgroundColor: '#ff9100', color: 'white', '&:hover': { backgroundColor: '#b26500' } }}
+                variant="contained"
+                color="secondary"
                 onClick={handleRevers}
               >
                 戻る
               </Button>
-              <Button 
-                sx={{ backgroundColor: '#ff9100', color: 'white', '&:hover': { backgroundColor: '#b26500' } }} 
-                variant="contained" 
-                color="secondary" 
+              <Button
+                sx={{ backgroundColor: '#ff9100', color: 'white', '&:hover': { backgroundColor: '#b26500' } }}
+                variant="contained"
+                color="secondary"
                 onClick={handleSkip}
               >
                 次へ
@@ -389,16 +389,16 @@ export default function Syounin() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Status</TableCell>
-                    <TableCell>from user id</TableCell>
-                    <TableCell>Comment</TableCell>
-                    <TableCell>Shinsei ID</TableCell>
-                    <TableCell>Flow ID</TableCell>
-                    <TableCell>Title</TableCell>
-                    <TableCell>Kind</TableCell>
-                    <TableCell>Shop</TableCell>
-                    <TableCell>Amount</TableCell>
-                    <TableCell>Date</TableCell>
+                    <TableCell>申請状態</TableCell>
+                    <TableCell>申請者</TableCell>
+                    <TableCell>コメント</TableCell>
+                    <TableCell>申請</TableCell>
+                    <TableCell>承認フロー</TableCell>
+                    <TableCell>申請タイトル</TableCell>
+                    <TableCell>科目</TableCell>
+                    <TableCell>店舗</TableCell>
+                    <TableCell>金額</TableCell>
+                    <TableCell>日時</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
