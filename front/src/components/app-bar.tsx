@@ -71,7 +71,7 @@ export default function CustomAppBar() {
   }, []);
 
   const menuLink = [
-    { "link": "/", "label": "Home" },
+    // { "link": "/", "label": "Home" },
     { "link": "/sinki-user-sakusei", "label": "新規ユーザー作成" },
     { "link": "/sinki-sinsei", "label": "新規申請" },
     { "link": "/sinsei-teishutsu", "label": "申請提出" },
@@ -87,22 +87,34 @@ export default function CustomAppBar() {
     <AppBar position="static" style={{ marginBottom: "50px" }}>
       <Container maxWidth="xl">
       <Toolbar disableGutters>
-      <Typography
-    variant="h6"
-    noWrap
-    component="div"
-    sx={{
-      mr: 2,
-      display: { xs: 'none', md: 'flex' },
-      fontFamily: 'monospace',
-      fontWeight: 700,
-      letterSpacing: '.3rem',
-      color: 'inherit',
-      textDecoration: 'none',
-    }}
-      >
-      Kimochi++
-    </Typography>
+      <Button
+      component={Link}
+      to="/"
+      sx={{
+            mr: 2,
+            display: { xs: 'none', md: 'flex' },
+            fontFamily: 'monospace',
+            fontWeight: 700,
+            letterSpacing: '.3rem',
+            color: 'inherit',
+            textDecoration: 'none',
+          }}
+        >
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            Kimochi++
+          </Typography>
+        </Button>
 
           <StyledBox>
             {menuLink.map((item) => (
