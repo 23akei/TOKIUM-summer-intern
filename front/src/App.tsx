@@ -13,6 +13,8 @@ import SyouninHuroItiran from './pages/syounin-huro-itiran.tsx'
 import AppBar from './components/app-bar.tsx'
 import SWOpenAPI from './pages/doc.tsx'
 import WebhookTouroku from './pages/webhook-touroku.tsx'
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 
 function App() {
@@ -31,8 +33,26 @@ function App() {
 
       <Routes>
         <Route path="/" element={<>
-            <Header/>
+          <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            
+          }}
+        >
+          <Header />
+
+          <Box sx={{ padding: '10px' }}>
             <p>hello tokium</p>
+          </Box>
+          
+          <Box sx={{ padding: '10px' }}>
+            <Typography>メンバー： 大河内建吾、神田智也、迫悠景</Typography>
+          </Box>
+          
+    </div>
           </>}>
 
         </Route>
