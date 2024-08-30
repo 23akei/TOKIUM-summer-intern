@@ -183,7 +183,7 @@ export default function SinseiTeishutsu() {
                     />
                   </TableCell>
                   <TableCell>{app.application.title}</TableCell>
-                  <TableCell>{app.flow.name}</TableCell>
+                  <TableCell>{app.flow?.name}</TableCell>
                   <TableCell>{getUserNameById(app.application.user_id)}</TableCell> {/* user_id を user.name に置き換え */}
                   <TableCell>{app.application.kind}</TableCell>
                   <TableCell>{app.application.shop}</TableCell>
