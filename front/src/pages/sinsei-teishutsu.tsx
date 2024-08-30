@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { api } from "../const"
-import { Application, Submittion } from "../../openapi/api";
+import { Application, Submittion, Flow } from "../../openapi/api";
 import { Context } from "../Context";
 import { User } from "../../openapi/api"
 import styled from '@emotion/styled';
@@ -13,12 +13,18 @@ import { Box, Button, Checkbox, Table, TableBody, TableContainer,TableCell,Table
 interface SubmittionAndApplication {
   submittion: Submittion
   application?: Application,
+  flow: Flow,
+}
+
+interface toSubmittions {
+  application: Application,
+  flow: Flow
 }
 
 export default function SinseiTeishutsu() {
   const { userID } = useContext(Context)
   const [users, setUsers] = useState<User[]>([])
-  const [toSubimitList, setToSubmitList] = useState<Application[]>([]); //submitted yet
+  const [toSubimitList, setToSubmitList] = useState<toSubmittions[]>([]); //submitted yet
   const [submittedList, setSubmittedList] = useState<SubmittionAndApplication[]>([]); //submitted already
   const [selectedApplicationIDs, setSelectedApplicationIDs] = useState<number[]>([]);
 
@@ -29,7 +35,7 @@ export default function SinseiTeishutsu() {
       setUsers(res.data)
     }
   }
-  
+
   useEffect(()=>{
     fetchAllUsers()
   }, [])
@@ -38,11 +44,11 @@ export default function SinseiTeishutsu() {
     const user = users.find(user => user.id === userId);
     return user ? user.name : "Unknown User";
   }
-  
+
 
   const selectAllApplications = () => {
     setSelectedApplicationIDs(
-      toSubimitList.map(application => application.id)
+      toSubimitList.map(app => app.application.id)
     )
   }
   const unselectAllApplications = () => {
@@ -50,11 +56,11 @@ export default function SinseiTeishutsu() {
       []
     )
   }
-  
+
   const isApplicationSelected = (application_id: number): boolean => {
     return selectedApplicationIDs.includes(application_id)
   }
-  
+
   const onSelectApplication = (checked: boolean, application_id: number) => {
     if (checked) {
       if (!isApplicationSelected(application_id)) {
@@ -76,7 +82,7 @@ export default function SinseiTeishutsu() {
     });
 
     await Promise.all(promises)
-    
+
     fetchApplicaions()
   }
 
@@ -88,19 +94,25 @@ export default function SinseiTeishutsu() {
     return null;
   }
 
-  const classifyApplications = (applications: Application[], submittions: Submittion[]) => {
+  const classifyApplications =  async (applications: Application[], submittions: Submittion[]) => {
     let _submittedList: SubmittionAndApplication[] = []
 
-    setToSubmitList(
-      applications.filter(app => {
-        const sub = findSubmittion(app, submittions)
-        if (sub != null) {
-          _submittedList.push({ submittion: sub, application: app })
-          return false;
-        }
-        return true;
-      })
-    )
+    const res = await api.flows.getFlows()
+    const flows = res.data
+
+    const app = applications.filter(app => {
+      const sub = findSubmittion(app, submittions)
+      const flow =  flows.find(flow => flow.id === app.flow_id) as Flow
+      if (sub != null) {
+        _submittedList.push({ submittion: sub, application: app, flow: flow })
+        return false;
+      }
+      return true;
+    }).map(app => {
+      const flow =  flows.find(flow => flow.id === app.flow_id) as Flow
+      return { application: app, flow: flow }
+    });
+    setToSubmitList(app)
     setSubmittedList(_submittedList)
   }
 
@@ -151,9 +163,8 @@ export default function SinseiTeishutsu() {
               <TableRow >
                 <TableCell></TableCell>
                 <TableCell>タイトル</TableCell>
-                <TableCell>申請 </TableCell>
                 <TableCell>承認フロー</TableCell>
-                <TableCell>ユーザーネーム</TableCell>
+                <TableCell>申請者</TableCell>
                 <TableCell>科目</TableCell>
                 <TableCell>店舗</TableCell>
                 <TableCell>金額</TableCell>
@@ -162,23 +173,22 @@ export default function SinseiTeishutsu() {
             </TableHead>
             <TableBody>
               {toSubimitList.map((app) => (
-                <TableRow key={app.id}>
+                <TableRow key={app.application.id}>
                   <TableCell>
                     <Checkbox
                       onChange={(e) =>
-                        onSelectApplication(e.target.checked, app.id as number)
+                        onSelectApplication(e.target.checked, app.application.id as number)
                       }
-                      checked={isApplicationSelected(app.id)}
+                      checked={isApplicationSelected(app.application.id)}
                     />
                   </TableCell>
-                  <TableCell>{app.title}</TableCell>
-                  <TableCell>{app.id}</TableCell>
-                  <TableCell>{app.flow_id}</TableCell>
-                  <TableCell>{getUserNameById(app.user_id)}</TableCell> {/* user_id を user.name に置き換え */}
-                  <TableCell>{app.kind}</TableCell>
-                  <TableCell>{app.shop}</TableCell>
-                  <TableCell>{app.amount}</TableCell>
-                  <TableCell>{app?.date && new Date(app.date).toLocaleDateString('ja-JP')}</TableCell>
+                  <TableCell>{app.application.title}</TableCell>
+                  <TableCell>{app.flow.name}</TableCell>
+                  <TableCell>{getUserNameById(app.application.user_id)}</TableCell> {/* user_id を user.name に置き換え */}
+                  <TableCell>{app.application.kind}</TableCell>
+                  <TableCell>{app.application.shop}</TableCell>
+                  <TableCell>{app.application.amount}</TableCell>
+                  <TableCell>{app?.application.date && new Date(app.application.date).toLocaleDateString('ja-JP')}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -194,9 +204,8 @@ export default function SinseiTeishutsu() {
               <TableRow sx={{ backgroundColor: '#c9c9c9', color: 'white' }}>
                 <TableCell>申請状態</TableCell>
                 <TableCell>タイトル</TableCell>
-                <TableCell>申請</TableCell>
                 <TableCell>承認フロー</TableCell>
-                <TableCell>ユーザーネーム</TableCell>
+                <TableCell>申請者</TableCell>
                 <TableCell>科目</TableCell>
                 <TableCell>店舗</TableCell>
                 <TableCell>金額</TableCell>
@@ -207,7 +216,7 @@ export default function SinseiTeishutsu() {
               {submittedList.map((sub) => (
                 <TableRow key={sub.application?.id}>
                   <TableCell>
-                    <Box 
+                    <Box
                       sx={{
                         display: 'inline-block',
                         padding: '2px 4px',
@@ -230,8 +239,7 @@ export default function SinseiTeishutsu() {
                     </Box>
                   </TableCell>
                   <TableCell>{sub.application?.title}</TableCell>
-                  <TableCell>{sub.application?.id}</TableCell>
-                  <TableCell>{sub.application?.flow_id}</TableCell>
+                  <TableCell>{sub.flow?.name}</TableCell>
                   <TableCell>{getUserNameById(sub.application?.user_id)}</TableCell>
                   <TableCell>{sub.application?.kind}</TableCell>
                   <TableCell>{sub.application?.shop}</TableCell>
